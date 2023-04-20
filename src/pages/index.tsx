@@ -60,14 +60,14 @@ export default function Home() {
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(_bossTimeStampList))
   }
 
-  const [channelSelected, setChannelSelected] = useState(0);
+  const [channelSelected, setChannelSelected] = useState<number>(0);
   const handleChangeChannel = (e: any) => {
-    const value = e.target.value
+    const value = parseInt(e.target.value)
     setChannelSelected(value);
   };
 
   const _bossTimeStampList: Array<BossRespawn> = []
-  const [bossTimeStampList, setBossTimeStampList] = useState(_bossTimeStampList);
+  const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
 
   const stampBossRespawn = async () => {
     const boss = boosList.find(boss => boss.bossId === bossSelected)
@@ -171,6 +171,7 @@ export default function Home() {
         <div className="w-full max-w-sm mb-4">
           <div className="md:flex md:items-center mb-2">
             <Select
+              label=""
               id="bossInput"
               value={bossSelected}
               onChange={handleChangeBoss}
