@@ -1,4 +1,7 @@
 import React from 'react';
+import chroma from 'chroma-js';
+
+import Select, { StylesConfig } from 'react-select'
 
 interface optionProps {
     label: string;
@@ -13,18 +16,67 @@ interface InputProps {
     options: Array<optionProps>;
 }
 
+
+const dot = (color = 'transparent') => ({
+    alignItems: 'center',
+    display: 'flex'
+});
+
+const colorData = "#785CBC";
+const color = chroma(colorData);
+
+const colourStyles: StylesConfig<optionProps> = {
+    control: (styles) => ({ ...styles, backgroundColor: '#785CBC', border: 0 }),
+    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+        return {
+            ...styles,
+            backgroundColor: isDisabled
+                ? undefined
+                : isSelected
+                    ? colorData
+                    : isFocused
+                        ? color.alpha(0.1).css()
+                        : undefined,
+            color: isDisabled
+                ? '#ccc'
+                : isSelected
+                    ? chroma.contrast(color, 'white') > 2
+                        ? 'white'
+                        : 'black'
+                    : colorData,
+            cursor: isDisabled ? 'not-allowed' : 'default',
+            ':active': {
+                ...styles[':active'],
+                backgroundColor: !isDisabled
+                    ? isSelected
+                        ? colorData
+                        : color.alpha(0.3).css()
+                    : undefined,
+            },
+        };
+    },
+    input: (styles) => ({ ...styles, ...dot() }),
+    placeholder: (styles) => ({ ...styles, color: "#CCCCCC" }),
+    singleValue: (styles, { data }) => ({ ...styles, color: "#EFEFEF" }),
+    dropdownIndicator: base => ({
+      ...base,
+      "svg": {
+        fill: "#EFEFEF"
+      }
+    })
+};
+
 const Input: React.FC<InputProps> = ({ id, onChange, value, label, options }) => {
     return (
-        <div>
-            <select
+        <div className='w-full'>
+            <Select
                 id={id}
-                value={value}
+                defaultValue={value}
                 onChange={onChange}
-            >
-                {options.map((option, index) => {
-                    return <option key={index} value={option.value}>{option.label}</option>
-                })}
-            </select>
+                options={options}
+                placeholder={label}
+                styles={colourStyles}
+            />
         </div>
     )
 }

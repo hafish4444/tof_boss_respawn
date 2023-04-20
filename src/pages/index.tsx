@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Input from "../../components/input";
 import Select from "../../components/select";
 import { v4 as uuidv4 } from 'uuid';
+import CardBoss from "../../components/cardBoss";
 
 interface Boss {
   bossId: string,
@@ -29,10 +30,9 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const [bossSelected, setBossSelected] = useState("ROBRAG");
-  const handleChangeBoss = (e: any) => {
-    const value = e.target.value
-    setBossSelected(value);
+  const [bossSelected, setBossSelected] = useState();
+  const handleChangeBoss = (data: any) => {
+    setBossSelected(data.value);
   };
 
   const handleCheckBoss = (boss: BossRespawn, isFind: Boolean) => {
@@ -66,19 +66,26 @@ export default function Home() {
     setChannelSelected(value);
   };
 
+  const [overTimeSelected, setOverTimeSelected] = useState();
+  const handleChangeOverTime = (e: any) => {
+    const value = e.target.value
+    setOverTimeSelected(value);
+  };
+
   const _bossTimeStampList: Array<BossRespawn> = []
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
 
   const stampBossRespawn = async () => {
     const boss = boosList.find(boss => boss.bossId === bossSelected)
+    const currentDate = moment().add(overTimeSelected * -1, 'minutes').format('YYYY-MM-DD HH:mm:ss')
     const newBoss: BossRespawn = {
       bossRespawnId: uuidv4(),
       name: boss?.name ?? "",
       bossId: boss?.bossId ?? "",
       imageUrl: boss?.imageUrl ?? "",
       channel: channelSelected,
-      dieTime: new Date(),
-      respawnTime: new Date(moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
+      dieTime: new Date(currentDate),
+      respawnTime: new Date(moment(currentDate).add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
       isCheck: false
     }
     const newBossList = [
@@ -87,6 +94,9 @@ export default function Home() {
     ]
     setBossTimeStampList(newBossList)
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(newBossList))
+
+    // Reset Input
+    setOverTimeSelected(undefined)
   }
 
   const boosList: Array<Boss> = [
@@ -103,7 +113,7 @@ export default function Home() {
     {
       bossId: "SOBEK",
       name: "Sobek",
-      imageUrl: "/sobeek.png"
+      imageUrl: "/sobek.png"
     },
     {
       bossId: "Lucia",
@@ -122,16 +132,15 @@ export default function Home() {
     },
     {
       bossId: "Frog",
-      name: "Frog",
+      name: "Devourer",
       imageUrl: "/frog.png"
     },
     {
       bossId: "FrostFiredragon",
-      name: "Dragon",
+      name: "Frostfire Dragon",
       imageUrl: "/frostfiredragon.png"
     }
   ];
-
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -142,38 +151,38 @@ export default function Home() {
     }
   }, [])
 
+  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck).slice(0, 40).sort((boss1, boss2) => moment(boss1.dieTime).diff(moment(boss2.dieTime)))
+  const respawnAllBossToClipboard = () => {
+    console.log(bossTimeStampList)
+    const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) =>{
+      return `${boss.name} CH${boss.channel} ${moment(boss.respawnTime).format("HH:mm:ss")}`   
+    }).join(" → ")
+    navigator.clipboard.writeText(`${sortBoss}`);
+  }
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#181826]">
       <div className="max-w-8xl mx-auto px-4 py-8 sm:px-6 md:px-8">
         <div className="grid  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3">
-          {bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck).slice(0, 40).sort((boss1, boss2) => moment(boss1.dieTime).diff(moment(boss2.dieTime))).map((boss, index) => (
-            <div className="bg-slate-700 rounded-xl shadow-lg dark:shadow-none  text-white p-4" key={index}>
-              <div className="flex justify-between items-center mb-2">
-                <div className="text-[24px] font-bold">{boss.name} | {boss.channel}</div>
-                <div><Image src={boss.imageUrl} alt={`Boss ${boss.name} Image`} width={150} height={100} /></div>
-              </div>
-              <div className="text-[20px]">
-                { Math.floor(moment(time).diff(boss.respawnTime, 'second') / 60) }
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="text-[22px]">
-                  {moment(boss.respawnTime).format("hh:mm:ss")}
-                </div>
-                <div>
-                  <button className="rounded-full bg-black p-2 text-center w-[34px] h-[34px] mr-1 text-sm" onClick={() => handleCheckBoss(boss, true)}>✓</button>
-                  <button className="rounded-full bg-black p-2 text-center w-[34px] h-[34px] text-sm" onClick={() => handleCheckBoss(boss, false)}>✗</button>
-                </div>
-              </div>
-
-            </div>
+          {displayBossTimeStampList.map((boss, index) => (
+            <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} />
           ))}
         </div>
+        { displayBossTimeStampList.length > 0 ?
+          <div className="my-4">
+            <button className="bg-green-600 text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossToClipboard}>Respawn all boss</button>
+          </div>
+          : ""
+        }
+        <hr className="my-5"/>
+        <div className="text-white mb-3 text-3xl font-bold">Boss Time Stamp</div>
         <div className="w-full max-w-sm mb-4">
           <div className="md:flex md:items-center mb-2">
             <Select
               label=""
               id="bossInput"
               value={bossSelected}
+              label="Boss Name"
               onChange={handleChangeBoss}
               options={boosList.map((boss) => {
                 return {
@@ -185,16 +194,25 @@ export default function Home() {
           </div>
           <div className="md:flex md:items-center mb-2">
             <Input
-              label="Channel"
               id="channelInput"
               type="number"
               value={channelSelected}
+              label="Channel"
               onChange={handleChangeChannel}
             />
           </div>
-          <button className="bg-slate-700 rounded-md shadow-lg dark:shadow-none  text-white p-4" onClick={stampBossRespawn}>บันทึก</button>
+          <div className="md:flex md:items-center mb-2">
+            <Input
+              id="overTimeInput"
+              type="number"
+              value={overTimeSelected}
+              label="Over Time"
+              onChange={handleChangeOverTime}
+            />
+          </div>
+          <button className="bg-[#c7628f] rounded-md shadow-lg dark:shadow-none  text-white p-4 mt-2" onClick={stampBossRespawn}>Stamp</button>
         </div>
-        <p className="" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
+        <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
       </div>
     </div>
   )
