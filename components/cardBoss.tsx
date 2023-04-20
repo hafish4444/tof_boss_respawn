@@ -4,7 +4,8 @@ import Image from "next/image"
 
 interface propsCardBoss {
   boss: BossRespawn
-  handleCheckBoss: (boss: BossRespawn, isFind: Boolean) => void;
+  handleCheckBoss: (boss: BossRespawn, isFind: Boolean) => void
+  notify: () => void
 }
 
 interface Boss {
@@ -21,7 +22,7 @@ interface BossRespawn extends Boss {
 }
 
 export default function CardBoss(props: propsCardBoss) {
-  const { boss, handleCheckBoss } = props
+  const { boss, handleCheckBoss, notify } = props
   const [time, setTime] = useState(new Date());
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,10 +49,12 @@ export default function CardBoss(props: propsCardBoss) {
 
   const dataBossToClipboard = () => {
     navigator.clipboard.writeText(`${boss.name} [CH${boss.channel}] Auto Join`);
+    notify()
   }
 
   const respawnBossToClipboard = () => {
     navigator.clipboard.writeText(`${boss.name} CH${boss.channel} ${textRespawn}`);
+    notify()
   }
 
   return (

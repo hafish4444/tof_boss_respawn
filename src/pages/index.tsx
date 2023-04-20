@@ -6,7 +6,8 @@ import Select from "../../components/select";
 import { v4 as uuidv4 } from 'uuid';
 import CardBoss from "../../components/cardBoss";
 
-import { PropsValue } from 'react-select'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Boss {
   bossId: string,
@@ -21,8 +22,8 @@ interface BossRespawn extends Boss {
   isCheck: boolean
 }
 interface optionProps {
-    label: string;
-    value: string;
+  label: string;
+  value: string;
 }
 
 export default function Home() {
@@ -68,8 +69,8 @@ export default function Home() {
       imageUrl: "/frostfiredragon.png"
     }
   ];
-  
-  const bossOptions : Array<optionProps> = boosList.map((boss) => {
+
+  const bossOptions: Array<optionProps> = boosList.map((boss) => {
     return {
       label: boss.name,
       value: boss.bossId
@@ -167,28 +168,41 @@ export default function Home() {
   const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck).slice(0, 40).sort((boss1, boss2) => moment(boss1.dieTime).diff(moment(boss2.dieTime)))
   const respawnAllBossToClipboard = () => {
     console.log(bossTimeStampList)
-    const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) =>{
-      return `${boss.name} CH${boss.channel} ${moment(boss.respawnTime).format("HH:mm:ss")}`   
+    const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
+      return `${boss.name} CH${boss.channel} ${moment(boss.respawnTime).format("HH:mm:ss")}`
     }).join(" → ")
     navigator.clipboard.writeText(`${sortBoss}`);
+    notify()
   }
 
+  const notify = () => {
+    toast('⌨ Copy to clipboard!', {
+      position: "bottom-left",
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
   return (
     <div className="min-h-screen bg-[#181826]">
       <div className="max-w-8xl mx-auto px-4 py-8 sm:px-6 md:px-8">
         <div className="grid  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3">
           {displayBossTimeStampList.map((boss, index) => (
-            <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} />
+            <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} notify={notify}/>
           ))}
         </div>
-        { displayBossTimeStampList.length > 0 ?
+        {displayBossTimeStampList.length > 0 ?
           <div className="my-4">
             <button className="bg-green-600 text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossToClipboard}>Respawn all boss</button>
           </div>
           : ""
         }
-        <hr className="my-5"/>
-        <div className="text-white mb-3 text-3xl font-bold">Boss Time Stamp</div>
+        <hr className="my-5" />
+        <div className="text-white mb-3 text-3xl font-bold">Boss TimeStamp</div>
         <div className="w-full max-w-sm mb-4">
           <div className="md:flex md:items-center mb-2">
             <Select
@@ -221,6 +235,18 @@ export default function Home() {
         </div>
         <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
       </div>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={2000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   )
 }
