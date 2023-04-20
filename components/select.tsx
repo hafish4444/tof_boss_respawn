@@ -1,7 +1,7 @@
 import React from 'react';
 import chroma from 'chroma-js';
 
-import Select, { StylesConfig } from 'react-select'
+import Select, { StylesConfig, PropsValue } from 'react-select'
 
 interface optionProps {
     label: string;
@@ -11,11 +11,10 @@ interface optionProps {
 interface InputProps {
     id: string;
     onChange: any;
-    value: string;
+    value: PropsValue<optionProps>;
     label: string;
     options: Array<optionProps>;
 }
-
 
 const dot = (color = 'transparent') => ({
     alignItems: 'center',

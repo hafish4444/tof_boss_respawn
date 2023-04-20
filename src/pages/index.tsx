@@ -1,11 +1,12 @@
 import moment from "moment"
-import Image from "next/image"
 
 import { useState, useEffect } from 'react';
 import Input from "../../components/input";
 import Select from "../../components/select";
 import { v4 as uuidv4 } from 'uuid';
 import CardBoss from "../../components/cardBoss";
+
+import { PropsValue } from 'react-select'
 
 interface Boss {
   bossId: string,
@@ -19,86 +20,12 @@ interface BossRespawn extends Boss {
   respawnTime: Date,
   isCheck: boolean
 }
+interface optionProps {
+    label: string;
+    value: string;
+}
 
 export default function Home() {
-  const [time, setTime] = useState(new Date());
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const [bossSelected, setBossSelected] = useState();
-  const handleChangeBoss = (data: any) => {
-    setBossSelected(data.value);
-  };
-
-  const handleCheckBoss = (boss: BossRespawn, isFind: Boolean) => {
-    let _bossTimeStampList = JSON.parse(JSON.stringify(bossTimeStampList))
-    const bossIndex = _bossTimeStampList.findIndex((_boss: BossRespawn) => _boss.bossRespawnId === boss.bossRespawnId)
-    boss.isCheck = true
-    _bossTimeStampList[bossIndex] = boss
-    if (isFind) {
-      const newBoss: BossRespawn = {
-        bossRespawnId: uuidv4(),
-        name: boss?.name ?? "",
-        bossId: boss?.bossId ?? "",
-        imageUrl: boss?.imageUrl ?? "",
-        channel: boss?.channel,
-        dieTime: new Date(),
-        respawnTime: new Date(moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
-        isCheck: false
-      }
-      _bossTimeStampList = [
-        ..._bossTimeStampList,
-        newBoss
-      ]
-    }
-    setBossTimeStampList(_bossTimeStampList)
-    window.localStorage.setItem('bossTimeStampList', JSON.stringify(_bossTimeStampList))
-  }
-
-  const [channelSelected, setChannelSelected] = useState<number>(0);
-  const handleChangeChannel = (e: any) => {
-    const value = parseInt(e.target.value)
-    setChannelSelected(value);
-  };
-
-  const [overTimeSelected, setOverTimeSelected] = useState();
-  const handleChangeOverTime = (e: any) => {
-    const value = e.target.value
-    setOverTimeSelected(value);
-  };
-
-  const _bossTimeStampList: Array<BossRespawn> = []
-  const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
-
-  const stampBossRespawn = async () => {
-    const boss = boosList.find(boss => boss.bossId === bossSelected)
-    const currentDate = moment().add(overTimeSelected * -1, 'minutes').format('YYYY-MM-DD HH:mm:ss')
-    const newBoss: BossRespawn = {
-      bossRespawnId: uuidv4(),
-      name: boss?.name ?? "",
-      bossId: boss?.bossId ?? "",
-      imageUrl: boss?.imageUrl ?? "",
-      channel: channelSelected,
-      dieTime: new Date(currentDate),
-      respawnTime: new Date(moment(currentDate).add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
-      isCheck: false
-    }
-    const newBossList = [
-      ...bossTimeStampList,
-      newBoss
-    ]
-    setBossTimeStampList(newBossList)
-    window.localStorage.setItem('bossTimeStampList', JSON.stringify(newBossList))
-
-    // Reset Input
-    setOverTimeSelected(undefined)
-  }
-
   const boosList: Array<Boss> = [
     {
       bossId: "ROBRAG",
@@ -141,6 +68,92 @@ export default function Home() {
       imageUrl: "/frostfiredragon.png"
     }
   ];
+  
+  const bossOptions : Array<optionProps> = boosList.map((boss) => {
+    return {
+      label: boss.name,
+      value: boss.bossId
+    }
+  })
+
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const [bossSelected, setBossSelected] = useState<PropsValue<optionProps>>(bossOptions[0]);
+  const handleChangeBoss = (data: any) => {
+    setBossSelected(data.value);
+  };
+
+  const handleCheckBoss = (boss: BossRespawn, isFind: Boolean) => {
+    let _bossTimeStampList = JSON.parse(JSON.stringify(bossTimeStampList))
+    const bossIndex = _bossTimeStampList.findIndex((_boss: BossRespawn) => _boss.bossRespawnId === boss.bossRespawnId)
+    boss.isCheck = true
+    _bossTimeStampList[bossIndex] = boss
+    if (isFind) {
+      const newBoss: BossRespawn = {
+        bossRespawnId: uuidv4(),
+        name: boss?.name ?? "",
+        bossId: boss?.bossId ?? "",
+        imageUrl: boss?.imageUrl ?? "",
+        channel: boss?.channel,
+        dieTime: new Date(),
+        respawnTime: new Date(moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
+        isCheck: false
+      }
+      _bossTimeStampList = [
+        ..._bossTimeStampList,
+        newBoss
+      ]
+    }
+    setBossTimeStampList(_bossTimeStampList)
+    window.localStorage.setItem('bossTimeStampList', JSON.stringify(_bossTimeStampList))
+  }
+
+  const [channelSelected, setChannelSelected] = useState<number>(0);
+  const handleChangeChannel = (e: any) => {
+    const value = parseInt(e.target.value)
+    setChannelSelected(value);
+  };
+
+  const [overTimeSelected, setOverTimeSelected] = useState<number>();
+  const handleChangeOverTime = (e: any) => {
+    const value = e.target.value
+    setOverTimeSelected(value);
+  };
+
+  const _bossTimeStampList: Array<BossRespawn> = []
+  const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
+
+  const stampBossRespawn = async () => {
+    const boss = boosList.find(boss => boss.bossId === String(bossSelected))
+    const currentDate = moment().add(overTimeSelected ?? 0 * -1, 'minutes').format('YYYY-MM-DD HH:mm:ss')
+    const newBoss: BossRespawn = {
+      bossRespawnId: uuidv4(),
+      name: boss?.name ?? "",
+      bossId: boss?.bossId ?? "",
+      imageUrl: boss?.imageUrl ?? "",
+      channel: channelSelected,
+      dieTime: new Date(currentDate),
+      respawnTime: new Date(moment(currentDate).add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
+      isCheck: false
+    }
+    const newBossList = [
+      ...bossTimeStampList,
+      newBoss
+    ]
+    setBossTimeStampList(newBossList)
+    window.localStorage.setItem('bossTimeStampList', JSON.stringify(newBossList))
+
+    // Reset Input
+    setOverTimeSelected(undefined)
+  }
+
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -179,17 +192,11 @@ export default function Home() {
         <div className="w-full max-w-sm mb-4">
           <div className="md:flex md:items-center mb-2">
             <Select
-              label=""
               id="bossInput"
               value={bossSelected}
               label="Boss Name"
               onChange={handleChangeBoss}
-              options={boosList.map((boss) => {
-                return {
-                  label: boss.name,
-                  value: boss.bossId
-                }
-              })}
+              options={bossOptions}
             />
           </div>
           <div className="md:flex md:items-center mb-2">

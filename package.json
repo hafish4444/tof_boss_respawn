@@ -28,6 +28,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/chroma-js": "^2.4.0",
     "@types/uuid": "^9.0.1"
   }
 }

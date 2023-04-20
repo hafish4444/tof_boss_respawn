@@ -1,5 +1,6 @@
 import moment from "moment"
 import { useState, useEffect } from 'react';
+import Image from "next/image"
 
 interface propsCardBoss {
   boss: BossRespawn
@@ -55,8 +56,12 @@ export default function CardBoss(props: propsCardBoss) {
 
   return (
     <div className="bg-[#212134] text-white rounded-sm shadow-lg dark:shadow-none">
-      <div className="">
-        <img src={boss.imageUrl} alt={`Boss ${boss.name} Image`}></img>
+      <div className="relative h-[182px]">
+        <Image
+          src={boss.imageUrl}
+          alt={`Boss ${boss.name} Image`}
+          fill
+        />
       </div>
       <div className="px-4 my-2">
         <div className="text-[22px] font-bold cursor-pointer" onClick={ dataBossToClipboard }>{boss.name}</div>
