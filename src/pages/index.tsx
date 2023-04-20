@@ -85,9 +85,9 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const [bossSelected, setBossSelected] = useState<PropsValue<optionProps>>(bossOptions[0]);
+  const [bossSelected, setBossSelected] = useState<optionProps>(bossOptions[0]);
   const handleChangeBoss = (data: any) => {
-    setBossSelected(data.value);
+    setBossSelected(data);
   };
 
   const handleCheckBoss = (boss: BossRespawn, isFind: Boolean) => {
@@ -115,7 +115,7 @@ export default function Home() {
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(_bossTimeStampList))
   }
 
-  const [channelSelected, setChannelSelected] = useState<number>(0);
+  const [channelSelected, setChannelSelected] = useState<number>(1);
   const handleChangeChannel = (e: any) => {
     const value = parseInt(e.target.value)
     setChannelSelected(value);
@@ -131,7 +131,7 @@ export default function Home() {
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
 
   const stampBossRespawn = async () => {
-    const boss = boosList.find(boss => boss.bossId === String(bossSelected))
+    const boss = boosList.find(boss => boss.bossId === bossSelected?.value)
     const currentDate = moment().add(overTimeSelected ?? 0 * -1, 'minutes').format('YYYY-MM-DD HH:mm:ss')
     const newBoss: BossRespawn = {
       bossRespawnId: uuidv4(),
