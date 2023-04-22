@@ -60,7 +60,7 @@ export default function Home() {
     },
     {
       bossId: "Frog",
-      name: "Devourer",
+      name: "Devourer (กบ)",
       imageUrl: "/frog.png"
     },
     {
