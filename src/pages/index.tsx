@@ -113,6 +113,7 @@ export default function Home() {
       ]
     }
     setBossTimeStampList(_bossTimeStampList)
+    navigator.clipboard.writeText(`${boss.name} [CH${boss.channel}] [Free Chest] [Free shards] | Auto Join`);
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(_bossTimeStampList))
   }
 
@@ -166,10 +167,19 @@ export default function Home() {
   }, [])
 
   const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck).slice(0, 40).sort((boss1, boss2) => moment(boss1.dieTime).diff(moment(boss2.dieTime)))
+  const respawnAllBossWithTimeToClipboard = () => {
+    console.log(bossTimeStampList)
+    const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
+      return `${boss.name} [CH${boss.channel}] ${moment(boss.respawnTime).format("HH:mm:ss")}`
+    }).join(" → ")
+    navigator.clipboard.writeText(`${sortBoss}`);
+    notify()
+  }
+
   const respawnAllBossToClipboard = () => {
     console.log(bossTimeStampList)
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
-      return `${boss.name} CH${boss.channel} ${moment(boss.respawnTime).format("HH:mm:ss")}`
+      return `${boss.name}`
     }).join(" → ")
     navigator.clipboard.writeText(`${sortBoss}`);
     notify()
@@ -178,7 +188,7 @@ export default function Home() {
   const notify = () => {
     toast('⌨ Copy to clipboard!', {
       position: "bottom-left",
-      autoClose: 2000,
+      autoClose: 1500,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
@@ -198,6 +208,7 @@ export default function Home() {
         {displayBossTimeStampList.length > 0 ?
           <div className="my-4">
             <button className="bg-green-600 text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossToClipboard}>Respawn all boss</button>
+            <button className="bg-green-600 text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossWithTimeToClipboard}>Respawn all boss With time</button>
           </div>
           : ""
         }

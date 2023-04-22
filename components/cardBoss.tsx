@@ -38,7 +38,7 @@ export default function CardBoss(props: propsCardBoss) {
   const respawnTimeMinute = Math.floor(respawnTimeDiff / 60) * -1
   
   if (respawnTimeSecond < 60 && respawnTimeSecond > 0) {
-    textRespawn = `Respawn in ${respawnTimeSecond} second`
+    textRespawn = `Respawn in ${respawnTimeSecond} seconds`
   } else {
     if (respawnTimeMinute > 1) {
       textRespawn = `Respawn in ${respawnTimeMinute} minutes`
