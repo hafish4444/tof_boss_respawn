@@ -4,6 +4,7 @@ import Image from "next/image"
 
 interface propsCardBoss {
   boss: BossRespawn
+  disabledCheckBoss?: boolean
   handleCheckBoss: (boss: BossRespawn, isFind: Boolean) => void
   notify: () => void
 }
@@ -22,7 +23,7 @@ interface BossRespawn extends Boss {
 }
 
 export default function CardBoss(props: propsCardBoss) {
-  const { boss, handleCheckBoss, notify } = props
+  const { boss, disabledCheckBoss, handleCheckBoss, notify } = props
   const [time, setTime] = useState(new Date());
 
   
@@ -94,10 +95,14 @@ export default function CardBoss(props: propsCardBoss) {
           <div className="text-[20px]">
             {moment(boss.respawnTime).format("hh:mm:ss")}
           </div>
-          <div>
-            <button className="rounded-full bg-green-600 p-2 text-center w-[34px] h-[34px] mr-1 text-[12px]" onClick={() => handleCheckBoss(boss, true)}>✓</button>
-            <button className="rounded-full bg-red-600 p-2 text-center w-[34px] h-[34px] text-[12px]" onClick={() => handleCheckBoss(boss, false)}>✗</button>
-          </div>
+          {
+            !disabledCheckBoss ? 
+              <div>
+                <button className="rounded-full bg-green-600 p-2 text-center w-[34px] h-[34px] mr-1 text-[12px]" onClick={() => handleCheckBoss(boss, true)}>✓</button>
+                <button className="rounded-full bg-red-600 p-2 text-center w-[34px] h-[34px] text-[12px]" onClick={() => handleCheckBoss(boss, false)}>✗</button>
+              </div>
+            : ""
+          }
         </div>
       </div>
     </div>
