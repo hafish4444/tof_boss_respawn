@@ -1,6 +1,8 @@
 import moment from "moment"
 
 import { useState, useEffect } from 'react';
+import Image from "next/image"
+
 import Input from "../../components/input";
 import Select from "../../components/select";
 import { v4 as uuidv4 } from 'uuid';
@@ -200,18 +202,30 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#181826]">
       <div className="max-w-8xl mx-auto px-4 py-8 sm:px-6 md:px-8">
-        <div className="grid  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3">
-          {displayBossTimeStampList.map((boss, index) => (
-            <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} notify={notify}/>
-          ))}
+        <div className="grid  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[341px]">
+          { 
+            displayBossTimeStampList.length > 0 ? 
+              displayBossTimeStampList.map((boss, index) => (
+                <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} notify={notify}/>
+              ))
+            : <div className="self-center text-white text-xl col-span-12 text-center">
+                <Image
+                  src={"/nya.png"}
+                  alt={`nya`}
+                  width={180}
+                  height={40}
+                  className="m-auto mb-3"
+                />
+                <div className="text-[#6B86CF] text-4xl font-extrabold mb-3">No Boss Result</div>
+                <div className="">Please Select Boss Time Stamp</div>
+                <div>From Below Section</div>
+              </div>
+          }
         </div>
-        {displayBossTimeStampList.length > 0 ?
-          <div className="my-4">
-            <button className="bg-green-600 text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossToClipboard}>Respawn all boss</button>
-            <button className="bg-green-600 text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossWithTimeToClipboard}>Respawn all boss With time</button>
-          </div>
-          : ""
-        }
+        <div className="my-4">
+          <button className="bg-green-600 disabled:bg-green-800 disabled:text-slate-200 disabled:cursor-not-allowed  text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossToClipboard} disabled={displayBossTimeStampList.length === 0} >Respawn all boss</button>
+          <button className="bg-green-600 disabled:bg-green-800 disabled:text-slate-200 disabled:cursor-not-allowed  text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossWithTimeToClipboard} disabled={displayBossTimeStampList.length === 0} >Respawn all boss With time</button>
+        </div>
         <hr className="my-5" />
         <div className="text-white mb-3 text-3xl font-bold">Boss TimeStamp</div>
         <div className="w-full max-w-sm mb-4">
