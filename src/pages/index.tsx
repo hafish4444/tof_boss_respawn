@@ -217,7 +217,7 @@ export default function Home() {
                   className="m-auto mb-3"
                 />
                 <div className="text-[#6B86CF] text-4xl font-extrabold mb-3">No Boss Result</div>
-                <div className="">Please Select Boss Time Stamp</div>
+                <div className="">Please Select Boss Timestamp</div>
                 <div>From Below Section</div>
               </div>
           }
@@ -227,7 +227,7 @@ export default function Home() {
           <button className="bg-green-600 disabled:bg-green-800 disabled:text-slate-200 disabled:cursor-not-allowed  text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossWithTimeToClipboard} disabled={displayBossTimeStampList.length === 0} >Respawn all boss With time</button>
         </div>
         <hr className="my-5" />
-        <div className="text-white mb-3 text-3xl font-bold">Boss TimeStamp</div>
+        <div className="text-white mb-3 text-3xl font-bold">Boss Timestamp</div>
         <div className="w-full max-w-sm mb-4">
           <div className="md:flex md:items-center mb-2">
             <Select
