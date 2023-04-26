@@ -21,11 +21,11 @@ const dot = (color = 'transparent') => ({
     display: 'flex'
 });
 
-const colorData = "#785CBC";
+const colorData = "#6346AA";
 const color = chroma(colorData);
 
 const colourStyles: StylesConfig<optionProps> = {
-    control: (styles) => ({ ...styles, backgroundColor: '#785CBC', border: 0 }),
+    control: (styles) => ({ ...styles, backgroundColor: '#6346AA', border: 0 }),
     option: (styles, { data, isDisabled, isFocused, isSelected }) => {
         return {
             ...styles,
@@ -56,11 +56,11 @@ const colourStyles: StylesConfig<optionProps> = {
     },
     input: (styles) => ({ ...styles, ...dot() }),
     placeholder: (styles) => ({ ...styles, color: "#CCCCCC" }),
-    singleValue: (styles, { data }) => ({ ...styles, color: "#EFEFEF" }),
+    singleValue: (styles, { data }) => ({ ...styles, color: "#FFFFFF" }),
     dropdownIndicator: base => ({
       ...base,
       "svg": {
-        fill: "#EFEFEF"
+        fill: "#FFFFFF"
       }
     })
 };

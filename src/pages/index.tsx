@@ -242,7 +242,7 @@ export default function Home() {
               onChange={handleChangeOverTime}
             />
           </div>
-          <button className="bg-[#c7628f] rounded-md shadow-lg dark:shadow-none  text-white p-4 mt-2" onClick={stampBossRespawn}>Stamp</button>
+          <button className="bg-[#A32951] rounded-md shadow-lg dark:shadow-none  text-white p-4 mt-2" onClick={stampBossRespawn}>Stamp</button>
         </div>
         <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
       </div>

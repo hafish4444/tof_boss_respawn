@@ -20,8 +20,8 @@ const Input: React.FC<InputProps> = ({ id, onChange, value, label, type }) => {
           pt-[14px] 
           pb-[2px] 
           px-3
-          text-[#EFEFEF]
-          bg-[#785CBC]
+          text-white
+          bg-[#6346AA]
           text-md 
           rounded-[4px]
           block
