@@ -113,7 +113,7 @@ export default function Home() {
       ]
     }
     setBossTimeStampList(_bossTimeStampList)
-    navigator.clipboard.writeText(`${boss.name} [CH${boss.channel}] [Free Chest] until ${new Date(moment().add(2, 'minutes').format('HH:mm:ss'))} | Auto Join`);
+    navigator.clipboard.writeText(`${boss.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(_bossTimeStampList))
   }
 
