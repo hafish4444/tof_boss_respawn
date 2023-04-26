@@ -10,6 +10,7 @@ import CardBoss from "../../components/cardBoss";
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Head from 'next/head'
 
 interface Boss {
   bossId: string,
@@ -200,78 +201,85 @@ export default function Home() {
     });
   }
   return (
-    <div className="min-h-screen bg-[#181826]">
-      <div className="max-w-8xl mx-auto px-4 py-8 sm:px-6 md:px-8">
-        <div className="grid  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[341px]">
-          { 
-            displayBossTimeStampList.length > 0 ? 
-              displayBossTimeStampList.map((boss, index) => (
-                <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} notify={notify}/>
-              ))
-            : <div className="self-center text-white text-xl col-span-12 text-center">
-                <Image
-                  src={"/nya.png"}
-                  alt={`nya`}
-                  width={180}
-                  height={40}
-                  className="m-auto mb-3"
-                />
-                <div className="text-[#6B86CF] text-4xl font-extrabold mb-3">No Boss Result</div>
-                <div className="">Please Select Boss Timestamp</div>
-                <div>From Below Section</div>
-              </div>
-          }
-        </div>
-        <div className="my-4">
-          <button className="bg-green-600 disabled:bg-green-800 disabled:text-slate-200 disabled:cursor-not-allowed  text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossToClipboard} disabled={displayBossTimeStampList.length === 0} >Respawn all boss</button>
-          <button className="bg-green-600 disabled:bg-green-800 disabled:text-slate-200 disabled:cursor-not-allowed  text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossWithTimeToClipboard} disabled={displayBossTimeStampList.length === 0} >Respawn all boss With time</button>
-        </div>
-        <hr className="my-5" />
-        <div className="text-white mb-3 text-3xl font-bold">Boss Timestamp</div>
-        <div className="w-full max-w-sm mb-4">
-          <div className="md:flex md:items-center mb-2">
-            <Select
-              id="bossInput"
-              value={bossSelected}
-              label="Boss Name"
-              onChange={handleChangeBoss}
-              options={bossOptions}
-            />
+    <>
+      <Head>
+        <title>TOF Boss Respawn</title>
+        <meta property="og:title" content="TOF Boss Respawn" key="title" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <div className="min-h-screen bg-[#181826]">
+        <div className="max-w-8xl mx-auto px-4 py-8 sm:px-6 md:px-8">
+          <div className="grid  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[341px]">
+            { 
+              displayBossTimeStampList.length > 0 ? 
+                displayBossTimeStampList.map((boss, index) => (
+                  <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} notify={notify}/>
+                ))
+              : <div className="self-center text-white text-xl col-span-12 text-center">
+                  <Image
+                    src={"/nya.png"}
+                    alt={`nya`}
+                    width={180}
+                    height={40}
+                    className="m-auto mb-3"
+                  />
+                  <div className="text-[#6B86CF] text-4xl font-extrabold mb-3">No Boss Result</div>
+                  <div className="">Please Select Boss Timestamp</div>
+                  <div>From Below Section</div>
+                </div>
+            }
           </div>
-          <div className="md:flex md:items-center mb-2">
-            <Input
-              id="channelInput"
-              type="number"
-              value={channelSelected}
-              label="Channel"
-              onChange={handleChangeChannel}
-            />
+          <div className="my-4">
+            <button className="bg-green-600 disabled:bg-green-800 disabled:text-slate-200 disabled:cursor-not-allowed  text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossToClipboard} disabled={displayBossTimeStampList.length === 0} >Respawn all boss</button>
+            <button className="bg-green-600 disabled:bg-green-800 disabled:text-slate-200 disabled:cursor-not-allowed  text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]" onClick={respawnAllBossWithTimeToClipboard} disabled={displayBossTimeStampList.length === 0} >Respawn all boss With time</button>
           </div>
-          <div className="md:flex md:items-center mb-2">
-            <Input
-              id="overTimeInput"
-              type="number"
-              value={overTimeSelected}
-              label="Over Time"
-              onChange={handleChangeOverTime}
-            />
+          <hr className="my-5" />
+          <div className="text-white mb-3 text-3xl font-bold">Boss Timestamp</div>
+          <div className="w-full max-w-sm mb-4">
+            <div className="md:flex md:items-center mb-2">
+              <Select
+                id="bossInput"
+                value={bossSelected}
+                label="Boss Name"
+                onChange={handleChangeBoss}
+                options={bossOptions}
+              />
+            </div>
+            <div className="md:flex md:items-center mb-2">
+              <Input
+                id="channelInput"
+                type="number"
+                value={channelSelected}
+                label="Channel"
+                onChange={handleChangeChannel}
+              />
+            </div>
+            <div className="md:flex md:items-center mb-2">
+              <Input
+                id="overTimeInput"
+                type="number"
+                value={overTimeSelected}
+                label="Over Time"
+                onChange={handleChangeOverTime}
+              />
+            </div>
+            <button className="bg-[#A32951] rounded-md shadow-lg dark:shadow-none  text-white p-4 mt-2" onClick={stampBossRespawn}>Stamp</button>
           </div>
-          <button className="bg-[#A32951] rounded-md shadow-lg dark:shadow-none  text-white p-4 mt-2" onClick={stampBossRespawn}>Stamp</button>
+          <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
         </div>
-        <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
+        <ToastContainer
+          position="bottom-left"
+          autoClose={2000}
+          hideProgressBar
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </div>
-      <ToastContainer
-        position="bottom-left"
-        autoClose={2000}
-        hideProgressBar
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-    </div>
+    </>
   )
 }
