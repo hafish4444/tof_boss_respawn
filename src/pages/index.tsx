@@ -113,7 +113,7 @@ export default function Home() {
       ]
     }
     setBossTimeStampList(_bossTimeStampList)
-    navigator.clipboard.writeText(`${boss.name} [CH${boss.channel}] [Free Chest] [Free shards] | Auto Join`);
+    navigator.clipboard.writeText(`${boss.name} [CH${boss.channel}] [Free Chest] until ${new Date(moment().add(2, 'minutes').format('HH:mm:ss'))} | Auto Join`);
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(_bossTimeStampList))
   }
 
@@ -168,7 +168,6 @@ export default function Home() {
 
   const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck).slice(0, 40).sort((boss1, boss2) => moment(boss1.dieTime).diff(moment(boss2.dieTime)))
   const respawnAllBossWithTimeToClipboard = () => {
-    console.log(bossTimeStampList)
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
       return `${boss.name} [CH${boss.channel}] ${moment(boss.respawnTime).format("HH:mm:ss")}`
     }).join(" → ")
@@ -194,6 +193,7 @@ export default function Home() {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
+      pauseOnFocusLoss: false,
       theme: "light",
     });
   }
