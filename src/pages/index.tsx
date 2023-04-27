@@ -76,17 +76,14 @@ export default function Home(props: PropsHome) {
       _bossTimeStampList[bossIndex] = boss
       if (isFind) {
         const newBoss: BossRespawn = {
-          _id: uuidv4(),
-          bossId: boss._id ?? "",
+          bossId: boss.bossId ?? "",
           channel: boss.channel,
           dieTime: new Date(),
           respawnTime: new Date(moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
           isCheck: false
         }
-        _bossTimeStampList = [
-          ..._bossTimeStampList,
-          newBoss
-        ]
+        let response: any = await ApiBoss.addBossTimeStamp(newBoss)
+        newBoss._id = response.insertedId
       }
       await ApiBoss.checkedBoss(boss._id ?? "", boss.isCheck)
       setBossTimeStampList(await getBossTimeStampList())

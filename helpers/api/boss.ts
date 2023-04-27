@@ -32,7 +32,7 @@ const myAPI = {
                 "Content-Type": "application/json"
             }
         })
-        return response.json();
+        return await response.json();
     }
 }
 export default myAPI
