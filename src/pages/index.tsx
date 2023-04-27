@@ -130,7 +130,6 @@ export default function Home(props: PropsHome) {
     newBoss._id = response.insertedId
 
     const bossTimeStampList = await getBossTimeStampList()
-    console.log('fish bossTimeStampList', bossTimeStampList)
     setBossTimeStampList(bossTimeStampList)
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(bossTimeStampList))
 
@@ -155,7 +154,6 @@ export default function Home(props: PropsHome) {
   }
 
   const respawnAllBossToClipboard = () => {
-    console.log(bossTimeStampList)
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
       return `${boss.boss?.name}`
     }).join(" → ")
