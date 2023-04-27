@@ -1,5 +1,6 @@
 import moment from "moment"
 
+import Head from 'next/head'
 import { useState, useEffect } from 'react';
 import Image from "next/image"
 
@@ -10,73 +11,46 @@ import CardBoss from "../../components/cardBoss";
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Head from 'next/head'
 
-interface Boss {
-  bossId: string,
-  name: string,
-  imageUrl: string
-}
-interface BossRespawn extends Boss {
-  bossRespawnId: string,
-  channel: number,
-  dieTime: Date,
-  respawnTime: Date,
-  isCheck: boolean
+import Boss from "../../types/boss"
+import BossRespawn from "../../types/bossRespawn"
+
+import ApiBoss from "@/helpers/api/boss"
+
+interface PropsHome {
+  bossList: Boss[]
+  bossRespawnList: BossRespawn[]
 }
 interface optionProps {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
-export default function Home() {
-  const boosList: Array<Boss> = [
-    {
-      bossId: "ROBRAG",
-      name: "Robrag",
-      imageUrl: "/robrag.png"
-    },
-    {
-      bossId: "BARBAROSSA",
-      name: "Barbarossa",
-      imageUrl: "/barbarossa.png"
-    },
-    {
-      bossId: "SOBEK",
-      name: "Sobek",
-      imageUrl: "/sobek.png"
-    },
-    {
-      bossId: "Lucia",
-      name: "Lucia",
-      imageUrl: "/lucia.png"
-    },
-    {
-      bossId: "Apophis",
-      name: "Apophis",
-      imageUrl: "/apophis.png"
-    },
-    {
-      bossId: "Frostbot",
-      name: "Frostbot",
-      imageUrl: "/frostbot.png"
-    },
-    {
-      bossId: "Frog",
-      name: "Devourer (กบ)",
-      imageUrl: "/frog.png"
-    },
-    {
-      bossId: "FrostFiredragon",
-      name: "Frostfire Dragon",
-      imageUrl: "/frostfiredragon.png"
+export async function getServerSideProps() {
+  try {
+    const bosses = await ApiBoss.getBossList()
+    const bossRespawn = await ApiBoss.getBossTimestamp()
+    return {
+      props: { bossList: JSON.parse(JSON.stringify(bosses)), bossRespawnList: JSON.parse(JSON.stringify(bossRespawn)) }
     }
-  ];
 
-  const bossOptions: Array<optionProps> = boosList.map((boss) => {
+  } catch(e) {
+    console.error(e);
+  }
+  const defaultProps: PropsHome = {
+    bossList: [], 
+    bossRespawnList: []
+  }
+  return defaultProps
+}
+
+export default function Home(props: PropsHome) {
+  const { bossList, bossRespawnList } = props
+
+  const bossOptions: Array<optionProps> = bossList.map((boss) => {
     return {
       label: boss.name,
-      value: boss.bossId
+      value: boss._id ?? ""
     }
   })
 
@@ -94,30 +68,31 @@ export default function Home() {
     setBossSelected(data);
   };
 
-  const handleCheckBoss = (boss: BossRespawn, isFind: Boolean) => {
-    let _bossTimeStampList = JSON.parse(JSON.stringify(bossTimeStampList))
-    const bossIndex = _bossTimeStampList.findIndex((_boss: BossRespawn) => _boss.bossRespawnId === boss.bossRespawnId)
-    boss.isCheck = true
-    _bossTimeStampList[bossIndex] = boss
-    if (isFind) {
-      const newBoss: BossRespawn = {
-        bossRespawnId: uuidv4(),
-        name: boss?.name ?? "",
-        bossId: boss?.bossId ?? "",
-        imageUrl: boss?.imageUrl ?? "",
-        channel: boss?.channel,
-        dieTime: new Date(),
-        respawnTime: new Date(moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
-        isCheck: false
+  const handleCheckBoss = async (boss: BossRespawn, isFind: Boolean) => {
+    let _bossTimeStampList = bossTimeStampList
+    const bossIndex = _bossTimeStampList.findIndex((_boss: BossRespawn) => _boss._id === boss._id)
+    if (bossIndex !== -1) {
+      boss.isCheck = true
+      _bossTimeStampList[bossIndex] = boss
+      if (isFind) {
+        const newBoss: BossRespawn = {
+          _id: uuidv4(),
+          bossId: boss._id ?? "",
+          channel: boss.channel,
+          dieTime: new Date(),
+          respawnTime: new Date(moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
+          isCheck: false
+        }
+        _bossTimeStampList = [
+          ..._bossTimeStampList,
+          newBoss
+        ]
       }
-      _bossTimeStampList = [
-        ..._bossTimeStampList,
-        newBoss
-      ]
+      await ApiBoss.checkedBoss(boss._id ?? "", boss.isCheck)
+      setBossTimeStampList(await getBossTimeStampList())
+      navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
+      window.localStorage.setItem('bossTimeStampList', JSON.stringify(bossTimeStampList))
     }
-    setBossTimeStampList(_bossTimeStampList)
-    navigator.clipboard.writeText(`${boss.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
-    window.localStorage.setItem('bossTimeStampList', JSON.stringify(_bossTimeStampList))
   }
 
   const [channelSelected, setChannelSelected] = useState<number>(1);
@@ -134,45 +109,49 @@ export default function Home() {
 
   const _bossTimeStampList: Array<BossRespawn> = []
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
+  const getBossTimeStampList = async () => {
+    const bossRespawn = await ApiBoss.getBossTimestamp()
+    return bossRespawn
+  }
 
   const stampBossRespawn = async () => {
-    const boss = boosList.find(boss => boss.bossId === bossSelected?.value)
+    const boss = bossList.find(boss => boss._id === bossSelected?.value) ?? {
+      name: "",
+      _id: "",
+      imageUrl: "",
+    }
     const currentDate = moment().add(overTimeSelected ?? 0 * -1, 'minutes').format('YYYY-MM-DD HH:mm:ss')
     const newBoss: BossRespawn = {
-      bossRespawnId: uuidv4(),
-      name: boss?.name ?? "",
-      bossId: boss?.bossId ?? "",
-      imageUrl: boss?.imageUrl ?? "",
+      bossId: boss._id ?? "",
       channel: channelSelected,
       dieTime: new Date(currentDate),
       respawnTime: new Date(moment(currentDate).add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
       isCheck: false
     }
-    const newBossList = [
-      ...bossTimeStampList,
-      newBoss
-    ]
-    setBossTimeStampList(newBossList)
-    window.localStorage.setItem('bossTimeStampList', JSON.stringify(newBossList))
+    
+    let response: any = await ApiBoss.addBossTimeStamp(newBoss)
+    newBoss._id = response.insertedId
+
+    const bossTimeStampList = await getBossTimeStampList()
+    console.log('fish bossTimeStampList', bossTimeStampList)
+    setBossTimeStampList(bossTimeStampList)
+    window.localStorage.setItem('bossTimeStampList', JSON.stringify(bossTimeStampList))
 
     // Reset Input
-    setOverTimeSelected(undefined)
+    setOverTimeSelected(0)
   }
 
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      console.log(window.localStorage.getItem('bossTimeStampList'))
-      setBossTimeStampList(
-        JSON.parse(window.localStorage.getItem('bossTimeStampList') ?? "[]")
-      )
+      setBossTimeStampList(bossRespawnList)
     }
   }, [])
 
   const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck).slice(0, 40).sort((boss1, boss2) => moment(boss1.dieTime).diff(moment(boss2.dieTime)))
   const respawnAllBossWithTimeToClipboard = () => {
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
-      return `${boss.name} [CH${boss.channel}] ${moment(boss.respawnTime).format("HH:mm:ss")}`
+      return `${boss.boss?.name} [CH${boss.channel}] ${moment(boss.respawnTime).format("HH:mm:ss")}`
     }).join(" → ")
     navigator.clipboard.writeText(`${sortBoss}`);
     notify()
@@ -181,7 +160,7 @@ export default function Home() {
   const respawnAllBossToClipboard = () => {
     console.log(bossTimeStampList)
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
-      return `${boss.name}`
+      return `${boss.boss?.name}`
     }).join(" → ")
     navigator.clipboard.writeText(`${sortBoss}`);
     notify()

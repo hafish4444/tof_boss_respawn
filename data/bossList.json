@@ -1,0 +1,34 @@
+[
+    {
+      "name": "Robrag",
+      "imageUrl": "/robrag.png"
+    },
+    {
+      "name": "Barbarossa",
+      "imageUrl": "/barbarossa.png"
+    },
+    {
+      "name": "Sobek",
+      "imageUrl": "/sobek.png"
+    },
+    {
+      "name": "Lucia",
+      "imageUrl": "/lucia.png"
+    },
+    {
+      "name": "Apophis",
+      "imageUrl": "/apophis.png"
+    },
+    {
+      "name": "Frostbot",
+      "imageUrl": "/frostbot.png"
+    },
+    {
+      "name": "Devourer (กบ)",
+      "imageUrl": "/frog.png"
+    },
+    {
+      "name": "Frostfire Dragon",
+      "imageUrl": "/frostfiredragon.png"
+    }
+  ]

@@ -1,85 +1,32 @@
 import moment from "moment"
 
 import { useState, useEffect } from 'react';
+import Head from 'next/head'
 import Image from "next/image"
-
-import Input from "../../components/input";
-import Select from "../../components/select";
-import { v4 as uuidv4 } from 'uuid';
+import ApiBoss from "@/helpers/api/boss"
 import CardBoss from "../../components/cardBoss";
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Head from 'next/head'
+import BossRespawn from "../../types/bossRespawn"
 
-interface Boss {
-  bossId: string,
-  name: string,
-  imageUrl: string
-}
-interface BossRespawn extends Boss {
-  bossRespawnId: string,
-  channel: number,
-  dieTime: Date,
-  respawnTime: Date,
-  isCheck: boolean
-}
-interface optionProps {
-  label: string;
-  value: string;
+interface PropsPreview {
+  bossRespawnList: [BossRespawn]
 }
 
-export default function Home() {
-  const boosList: Array<Boss> = [
-    {
-      bossId: "ROBRAG",
-      name: "Robrag",
-      imageUrl: "/robrag.png"
-    },
-    {
-      bossId: "BARBAROSSA",
-      name: "Barbarossa",
-      imageUrl: "/barbarossa.png"
-    },
-    {
-      bossId: "SOBEK",
-      name: "Sobek",
-      imageUrl: "/sobek.png"
-    },
-    {
-      bossId: "Lucia",
-      name: "Lucia",
-      imageUrl: "/lucia.png"
-    },
-    {
-      bossId: "Apophis",
-      name: "Apophis",
-      imageUrl: "/apophis.png"
-    },
-    {
-      bossId: "Frostbot",
-      name: "Frostbot",
-      imageUrl: "/frostbot.png"
-    },
-    {
-      bossId: "Frog",
-      name: "Devourer (กบ)",
-      imageUrl: "/frog.png"
-    },
-    {
-      bossId: "FrostFiredragon",
-      name: "Frostfire Dragon",
-      imageUrl: "/frostfiredragon.png"
-    }
-  ];
-
-  const bossOptions: Array<optionProps> = boosList.map((boss) => {
+export async function getServerSideProps() {
+  try {
+    const bossRespawn = await ApiBoss.getBossTimestamp()
     return {
-      label: boss.name,
-      value: boss.bossId
+      props: { bossRespawnList: JSON.parse(JSON.stringify(bossRespawn)) }
     }
-  })
 
+  } catch(e) {
+    console.error(e);
+    return e
+  }
+}
+
+export default function Home(props: PropsPreview) {
+  const { bossRespawnList } = props
   const [time, setTime] = useState(new Date());
   useEffect(() => {
     const interval = setInterval(() => {
@@ -89,7 +36,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const _bossTimeStampList: Array<BossRespawn> = []
+  const _bossTimeStampList: Array<BossRespawn> = bossRespawnList
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
 
 
