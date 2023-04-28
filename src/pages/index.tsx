@@ -98,7 +98,7 @@ export default function Home(props: PropsHome) {
     setChannelSelected(value);
   };
 
-  const [overTimeSelected, setOverTimeSelected] = useState<number>();
+  const [overTimeSelected, setOverTimeSelected] = useState<number>(0);
   const handleChangeOverTime = (e: any) => {
     const value = e.target.value
     setOverTimeSelected(value);
@@ -117,7 +117,7 @@ export default function Home(props: PropsHome) {
       _id: "",
       imageUrl: "",
     }
-    const currentDate = moment().add(overTimeSelected ?? 0 * -1, 'minutes').format('YYYY-MM-DD HH:mm:ss')
+    const currentDate = moment().add((overTimeSelected ?? 0) * -1, 'minutes').format('YYYY-MM-DD HH:mm:ss')
     const newBoss: BossRespawn = {
       bossId: boss._id ?? "",
       channel: channelSelected,
