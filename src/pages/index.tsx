@@ -33,7 +33,6 @@ export async function getServerSideProps() {
     return {
       props: { bossList: JSON.parse(JSON.stringify(bosses)), bossRespawnList: JSON.parse(JSON.stringify(bossRespawn)) }
     }
-
   } catch(e) {
     console.error(e);
   }
@@ -84,10 +83,10 @@ export default function Home(props: PropsHome) {
         }
         let response: any = await ApiBoss.addBossTimeStamp(newBoss)
         newBoss._id = response.insertedId
+        navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
       }
       await ApiBoss.checkedBoss(boss._id ?? "", boss.isCheck)
       setBossTimeStampList(await getBossTimeStampList())
-      navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
       window.localStorage.setItem('bossTimeStampList', JSON.stringify(bossTimeStampList))
     }
   }

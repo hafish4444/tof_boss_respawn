@@ -1,34 +1,72 @@
 [
     {
       "name": "Robrag",
+      "city": "Aesperia",
       "imageUrl": "/robrag.png"
     },
     {
       "name": "Barbarossa",
+      "city": "Aesperia",
       "imageUrl": "/barbarossa.png"
     },
     {
       "name": "Sobek",
+      "city": "Aesperia",
       "imageUrl": "/sobek.png"
     },
     {
       "name": "Lucia",
+      "city": "Aesperia",
       "imageUrl": "/lucia.png"
     },
     {
       "name": "Apophis",
+      "city": "Aesperia",
       "imageUrl": "/apophis.png"
     },
     {
       "name": "Frostbot",
+      "city": "Aesperia",
       "imageUrl": "/frostbot.png"
     },
     {
       "name": "Devourer (กบ)",
+      "city": "Aesperia",
       "imageUrl": "/frog.png"
     },
     {
       "name": "Frostfire Dragon",
+      "city": "Aesperia",
       "imageUrl": "/frostfiredragon.png"
+    },
+    {
+      "name": "Magma",
+      "city": "Vera",
+      "imageUrl": "/magma.png"
+    },
+    {
+      "name": "Rudolph",
+      "city": "Vera",
+      "imageUrl": "/rudolph.png"
+    },
+    {
+      "name": "Harrah",
+      "city": "Confounding Abyss",
+      "imageUrl": "/harrah.png"
+    },
+    {
+      "name": "Culton",
+      "city": "Confounding Abyss",
+      "imageUrl": "/culton.png"
+    },
+    {
+      "name": "Haboela",
+      "city": "Innars",
+      "imageUrl": "/haboela.png"
+    },
+    {
+      "name": "Scylla",
+      "city": "Innars",
+      "imageUrl": "/scylla.png"
     }
   ]

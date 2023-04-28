@@ -8,7 +8,6 @@ export default async function handler(req :any, res: any) {
     const movies = await db
       .collection("bosses")
       .find()
-      .limit(10)
       .toArray();
     res.status(200).json(movies);
   } catch (e) {
