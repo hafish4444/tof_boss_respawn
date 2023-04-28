@@ -70,6 +70,7 @@ const Input: React.FC<InputProps> = ({ id, onChange, value, label, options }) =>
         <div className='w-full'>
             <Select
                 id={id}
+                instanceId={id}
                 defaultValue={value}
                 onChange={onChange}
                 options={options}
