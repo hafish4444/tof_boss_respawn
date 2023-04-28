@@ -21,6 +21,10 @@ interface PropsHome {
   bossList: Boss[]
   bossRespawnList: BossRespawn[]
 }
+interface optionParentProps {
+  label: string
+  options: optionProps[]
+}
 interface optionProps {
   label: string
   value: string
@@ -43,15 +47,32 @@ export async function getServerSideProps() {
   return defaultProps
 }
 
+
 export default function Home(props: PropsHome) {
   const { bossList, bossRespawnList } = props
 
-  const bossOptions: Array<optionProps> = bossList.map((boss) => {
-    return {
-      label: boss.name,
-      value: boss._id ?? ""
+  const getOptionBoss = () => {
+    const bossOptions: optionParentProps[] = []
+    for (let index = 0; index < bossList.length; index++) {
+      const boss = bossList[index]
+      const city = `- ${boss.city}`
+      let bossOptionIndex = bossOptions.findIndex((optionParent) => optionParent.label === city)
+      if (bossOptionIndex === -1) {
+        bossOptions.push({
+          label: city,
+          options: []
+        })
+        bossOptionIndex = bossOptions.length - 1
+      }
+      bossOptions[bossOptionIndex].options.push({
+        label: boss.name,
+        value: boss._id ?? ""
+      })
     }
-  })
+    return bossOptions
+  }
+
+  const bossOptions: optionParentProps[] = getOptionBoss()
 
   const [time, setTime] = useState(new Date());
   useEffect(() => {
@@ -62,7 +83,7 @@ export default function Home(props: PropsHome) {
     return () => clearInterval(interval);
   }, []);
 
-  const [bossSelected, setBossSelected] = useState<optionProps>(bossOptions[0]);
+  const [bossSelected, setBossSelected] = useState<optionProps>(bossOptions[0].options[0]);
   const handleChangeBoss = (data: any) => {
     setBossSelected(data);
   };

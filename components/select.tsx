@@ -3,9 +3,13 @@ import chroma from 'chroma-js';
 
 import Select, { StylesConfig, PropsValue } from 'react-select'
 
+interface optionParentProps {
+  label: string
+  options: optionProps[]
+}
 interface optionProps {
-    label: string;
-    value: string;
+  label: string
+  value: string
 }
 
 interface InputProps {
@@ -13,7 +17,7 @@ interface InputProps {
     onChange: any;
     value: PropsValue<optionProps>;
     label: string;
-    options: Array<optionProps>;
+    options: Array<optionParentProps>;
 }
 
 const dot = (color = 'transparent') => ({
@@ -62,6 +66,11 @@ const colourStyles: StylesConfig<optionProps> = {
       "svg": {
         fill: "#FFFFFF"
       }
+    }),
+    groupHeading: (provided) => ({
+      ...provided,
+      fontSize: '16px',
+      color: 'purple',
     })
 };
 
