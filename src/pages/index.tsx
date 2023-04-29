@@ -36,15 +36,13 @@ export default function Home(props: PropsPreview) {
     return () => clearInterval(interval);
   }, []);
 
-  const _bossTimeStampList: Array<BossRespawn> = bossRespawnList
+  const _bossTimeStampList: Array<BossRespawn> = []
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
 
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setBossTimeStampList(
-        JSON.parse(window.localStorage.getItem('bossTimeStampList') ?? "[]")
-      )
+      setBossTimeStampList(bossRespawnList)
     }
   }, [])
   
