@@ -1,6 +1,6 @@
-import clientPromise from '../../../lib/mongodb'
 import { ObjectId } from "mongodb"
-
+import { pusher } from "../../../lib/pusher";
+import clientPromise from '../../../lib/mongodb'
 interface BossRespawn {
     bossId: ObjectId,
     channel: number,
@@ -17,6 +17,7 @@ export default async function handler(req: { body: BossRespawn }, res: any) {
             ...req.body,
             bossId: new ObjectId(req.body.bossId)
         })
+        await pusher.trigger("tof-boss-respawn-realtime", "boss-stamp-update", "Update time");
         res.json(boss_respawn);
     } catch (e: any) {
         console.error(e)

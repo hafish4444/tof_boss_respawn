@@ -96,6 +96,9 @@ export default function Home(props: PropsHome) {
       _bossTimeStampList[bossIndex] = boss
       if (isFind) {
         navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
+      }
+      await ApiBoss.checkedBoss(boss._id ?? "", boss.isCheck)
+      if (isFind) {
         const newBoss: BossRespawn = {
           bossId: boss.bossId ?? "",
           channel: boss.channel,
@@ -106,7 +109,6 @@ export default function Home(props: PropsHome) {
         let response: any = await ApiBoss.addBossTimeStamp(newBoss)
         newBoss._id = response.insertedId
       }
-      await ApiBoss.checkedBoss(boss._id ?? "", boss.isCheck)
       setBossTimeStampList(await getBossTimeStampList())
       window.localStorage.setItem('bossTimeStampList', JSON.stringify(bossTimeStampList))
     }
@@ -164,7 +166,7 @@ export default function Home(props: PropsHome) {
     }
   }, [])
 
-  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck).slice(0, 40).sort((boss1, boss2) => moment(boss1.dieTime).diff(moment(boss2.dieTime)))
+  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck)
   const respawnAllBossWithTimeToClipboard = () => {
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
       return `${boss.boss?.name} [CH${boss.channel}] ${moment(boss.respawnTime).format("HH:mm:ss")}`
@@ -175,7 +177,7 @@ export default function Home(props: PropsHome) {
 
   const respawnAllBossToClipboard = () => {
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
-      return `${boss.boss?.name}`
+      return `${boss.boss?.name} CH${boss.channel}`
     }).join(" → ")
     navigator.clipboard.writeText(`${sortBoss}`);
     notify()

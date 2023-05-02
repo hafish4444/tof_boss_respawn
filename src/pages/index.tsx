@@ -1,4 +1,5 @@
-import moment from "moment"
+import moment from "moment";
+import Pusher from "pusher-js";
 
 import { useState, useEffect } from 'react';
 import Head from 'next/head'
@@ -7,7 +8,6 @@ import ApiBoss from "@/helpers/api/boss"
 import CardBoss from "../../components/cardBoss";
 
 import BossRespawn from "../../types/bossRespawn"
-
 interface PropsPreview {
   bossRespawnList: [BossRespawn]
 }
@@ -28,25 +28,39 @@ export async function getServerSideProps() {
 export default function Home(props: PropsPreview) {
   const { bossRespawnList } = props
   const [time, setTime] = useState(new Date());
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const _bossTimeStampList: Array<BossRespawn> = []
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
-
+  const getBossTimeStampList = async () => {
+    const bossRespawn = await ApiBoss.getBossTimestamp()
+    return bossRespawn
+  }
 
   useEffect(() => {
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_KEY as string, {
+      cluster: process.env.PUSHER_APP_CLUSTER as string
+    });
+
     if (typeof window !== "undefined") {
       setBossTimeStampList(bossRespawnList)
     }
-  }, [])
+
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+    
+    const channel = pusher.subscribe("tof-boss-respawn-realtime"); 
+
+    channel.bind("boss-stamp-update", async function (data: any) {
+      setBossTimeStampList(await getBossTimeStampList())
+    });
+    return () => {
+      clearInterval(interval);
+      pusher.unsubscribe("tof-boss-respawn-realtime");
+    }
+  }, []);
   
-  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck).slice(0, 40).sort((boss1, boss2) => moment(boss1.dieTime).diff(moment(boss2.dieTime)))
+  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck)
   return (
     <>
       <Head>

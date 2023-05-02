@@ -1,3 +1,4 @@
+import moment from "moment";
 import clientPromise from "../../../lib/mongodb";
 
 export default async function handler(req :any, res: any) {
@@ -8,6 +9,25 @@ export default async function handler(req :any, res: any) {
     const bossTimeStamp = await db
       .collection("boss_time_stamp")
       .aggregate([
+        {
+          $match: {
+            isCheck: false,
+            $expr: {
+              $gte: [
+                { $toDate: "$respawnTime" },
+                { $toDate: moment().subtract(30, 'minutes').toDate() }
+              ]
+            }
+          }
+        },
+        {
+          $sort: {
+            dieTime: 1
+          }
+        },
+        {
+          $limit: 40
+        },
         {
           $lookup: {
             from: "bosses",

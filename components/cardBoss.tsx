@@ -59,7 +59,7 @@ export default function CardBoss(props: propsCardBoss) {
   }
 
   return (
-    <div className="bg-[#212134] text-white rounded-sm shadow-lg dark:shadow-none">
+    <div className="bg-[#212134] text-white rounded border border-[#242442] shadow-lg dark:shadow-none">
       <div className="relative h-[182px]">
         <Image
           src={boss.boss?.imageUrl ?? ""}
