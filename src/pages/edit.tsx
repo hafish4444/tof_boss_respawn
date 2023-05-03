@@ -35,7 +35,8 @@ export async function getServerSideProps() {
   try {
     const bosses = await ApiBoss.getBossList()
     const bossRespawn = await ApiBoss.getBossTimestamp({
-      bossList: []
+      bossList: [],
+      userId: ""
     })
     return {
       props: { bossList: JSON.parse(JSON.stringify(bosses)), bossRespawnList: JSON.parse(JSON.stringify(bossRespawn)) }
@@ -75,7 +76,8 @@ export default function Home(props: PropsHome) {
   }
   const getBossTimeStampList = async () => {
     const searchParam: SearchParam = {
-      bossList: bossSearch.map(boss => boss.value)
+      bossList: bossSearch.map(boss => boss.value),
+      userId: isOnlyMyStamp ? userId : ""
     }
     const bossRespawn = await ApiBoss.getBossTimestamp(searchParam)
     return bossRespawn
@@ -85,9 +87,11 @@ export default function Home(props: PropsHome) {
   const bossOptions: optionParentProps[] = getOptionBoss()
 
   const [time, setTime] = useState(new Date());
+  const [userId, setUserId] = useState<string>("");
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
 
   const [bossSearch, setBossSearch] = useState<optionProps[]>([]);
+  const [isOnlyMyStamp, setIsOnlyMyStamp] = useState<boolean>();
 
   const handleCheckBoss = async (boss: BossRespawn, isFind: Boolean) => {
     let _bossTimeStampList = bossTimeStampList
@@ -105,7 +109,8 @@ export default function Home(props: PropsHome) {
           channel: boss.channel,
           dieTime: new Date(),
           respawnTime: new Date(moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
-          isCheck: false
+          isCheck: false,
+          createdBy: userId
         }
         let response: any = await ApiBoss.addBossTimeStamp(newBoss)
         newBoss._id = response.insertedId
@@ -116,10 +121,9 @@ export default function Home(props: PropsHome) {
   const handleChangeBossSearch = async (data: any) => {
     setBossSearch(data);
   };
-
-  useEffect(() => {
-    setDataBossTimeStamp()
-  }, [bossSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+  const handleClickOnlyMyStamp = async () => {
+    setIsOnlyMyStamp(!isOnlyMyStamp)
+  }
 
   const setDataBossTimeStamp = async () => {
     const bossTimeStampList = await getBossTimeStampList()
@@ -127,7 +131,20 @@ export default function Home(props: PropsHome) {
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(bossTimeStampList))
   }
 
+  const getUserId = async () => {
+    if (typeof window !== "undefined") {
+      const userId = window.localStorage.getItem('userId') ?? uuidv4()
+      window.localStorage.setItem('userId', userId)
+      setUserId(userId)
+    }
+  }
+
   useEffect(() => {
+    setDataBossTimeStamp()
+  }, [bossSearch, isOnlyMyStamp]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    getUserId()
     if (typeof window !== "undefined") {
       setBossTimeStampList(bossRespawnList)
     }
@@ -138,7 +155,7 @@ export default function Home(props: PropsHome) {
     return () => clearInterval(interval);
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck)
+  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 10 && !boss.isCheck)
 
   const respawnAllBossWithTimeToClipboard = () => {
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
@@ -184,16 +201,39 @@ export default function Home(props: PropsHome) {
       <div className="min-h-screen bg-[#181826]">
         <div className="max-w-8xl mx-auto px-4 py-8 sm:px-6 md:px-8">
           <div className="mb-5">
-            <Select
-              id="bossInput"
-              value={bossSearch}
-              label="Boss Search"
-              isMulti={true}
-              onChange={handleChangeBossSearch}
-              options={bossOptions}
-            />
+            <div className="mb-3">
+              <Select
+                id="bossInput"
+                value={bossSearch}
+                label="Boss Search"
+                isMulti={true}
+                onChange={handleChangeBossSearch}
+                options={bossOptions}
+              />
+            </div>
+            <div>
+              <button 
+                className={
+                  `
+                    transition-all
+                    border-2
+                    border-[#6346AA]
+                    text-white
+                    rounded-sm
+                    p-2
+                    text-center
+                    mr-1
+                    text-[12px]
+                    ${isOnlyMyStamp ? "bg-[#6346AA]" : undefined}
+                  `
+                }
+                onClick={handleClickOnlyMyStamp} 
+              >
+                  Only My Stamp
+              </button>
+            </div>
           </div>
-          <div className="grid  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[341px]">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[341px]">
             { 
               displayBossTimeStampList.length > 0 ? 
                 displayBossTimeStampList.map((boss, index) => (
@@ -214,13 +254,42 @@ export default function Home(props: PropsHome) {
             }
           </div>
           <div className="my-4">
-            <button className="bg-green-600 disabled:bg-green-800 disabled:text-slate-200 disabled:cursor-not-allowed  text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]"
+            <button className="
+                transition-all
+                bg-green-600
+                hover:bg-green-700
+                disabled:bg-green-800
+                disabled:text-slate-200
+                disabled:cursor-not-allowed
+                text-white
+                rounded-sm
+                p-2
+                text-center
+                h-[34px]
+                mr-1
+                text-[12px]
+              "
               onClick={respawnAllBossToClipboard} 
               disabled={displayBossTimeStampList.length === 0}
-              >
-                Respawn all boss
+            >
+              Respawn all boss
             </button>
-            <button className="bg-green-600 disabled:bg-green-800 disabled:text-slate-200 disabled:cursor-not-allowed  text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]"
+            <button className="
+                transition-all
+                bg-green-600
+                hover:bg-green-700
+                disabled:bg-green-800
+                disabled:text-slate-200
+                disabled:cursor-not-allowed
+
+                text-white
+                rounded-sm
+                p-2
+                text-center
+                h-[34px]
+                mr-1
+                text-[12px]
+              "
               onClick={respawnAllBossWithTimeToClipboard} 
               disabled={displayBossTimeStampList.length === 0}
             >
@@ -230,7 +299,7 @@ export default function Home(props: PropsHome) {
           <hr className="my-5" />
           <div className="text-white mb-3 text-3xl font-bold">Boss Timestamp</div>
           <Suspense fallback={<div>Loading...</div>}>
-            <InputStampBoss bossOptions={bossOptions} setDataBossTimeStamp={setDataBossTimeStamp} />
+            <InputStampBoss bossOptions={bossOptions} setDataBossTimeStamp={setDataBossTimeStamp} userId={userId} />
             <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
           </Suspense>
         </div>

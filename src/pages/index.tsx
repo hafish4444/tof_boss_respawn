@@ -16,7 +16,8 @@ interface PropsPreview {
 export async function getServerSideProps() {
   try {
     const bossRespawn = await ApiBoss.getBossTimestamp({
-      bossList: []
+      bossList: [],
+      userId: ""
     })
     return {
       props: { bossRespawnList: JSON.parse(JSON.stringify(bossRespawn)) }
@@ -36,7 +37,8 @@ export default function Home(props: PropsPreview) {
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
   const getBossTimeStampList = async () => {
     const bossRespawn = await ApiBoss.getBossTimestamp({
-      bossList: []
+      bossList: [],
+      userId: ""
     })
     return bossRespawn
   }

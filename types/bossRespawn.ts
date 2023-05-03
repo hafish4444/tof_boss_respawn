@@ -7,4 +7,5 @@ export default interface BossRespawn {
   respawnTime: Date
   isCheck: boolean
   boss?: Boss
+  createdBy: string
 }

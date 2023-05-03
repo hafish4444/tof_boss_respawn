@@ -19,10 +19,11 @@ interface optionProps {
 interface InputProps {
     bossOptions: optionParentProps[]
     setDataBossTimeStamp: Function
+    userId: string
 }
 
 export default function InputStampBoss(props: InputProps) {
-    const { setDataBossTimeStamp, bossOptions } = props
+    const { setDataBossTimeStamp, bossOptions, userId } = props
     const [bossSelected, setBossSelected] = useState<optionProps>(bossOptions[0].options[0]);
     const [channelSelected, setChannelSelected] = useState<number>(1);
     const [overTimeSelected, setOverTimeSelected] = useState<number>(0);
@@ -47,7 +48,8 @@ export default function InputStampBoss(props: InputProps) {
             channel: channelSelected,
             dieTime: new Date(currentDate),
             respawnTime: new Date(moment(currentDate).add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
-            isCheck: false
+            isCheck: false,
+            createdBy: userId
         }
 
         let response: any = await ApiBoss.addBossTimeStamp(newBoss)
@@ -87,7 +89,7 @@ export default function InputStampBoss(props: InputProps) {
                     onChange={handleChangeOverTime}
                 />
             </div>
-            <button className="bg-[#A32951] rounded-md shadow-lg dark:shadow-none  text-white p-4 mt-2" onClick={stampBossRespawn}>Stamp</button>
+            <button className="transition-all bg-[#A32951] hover:bg-[#831e40] rounded-md shadow-lg dark:shadow-none  text-white p-4 mt-2" onClick={stampBossRespawn}>Stamp</button>
         </div>
     )
 }
