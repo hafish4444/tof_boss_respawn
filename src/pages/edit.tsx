@@ -208,8 +208,13 @@ export default function Home(props: PropsHome) {
   return (
     <>
       <Head>
-        <title>TOF Boss Respawn Edit</title>
-        <meta property="og:title" content="TOF Boss Respawn" key="title" />
+        <title>TOF Boss Respawn Time Edit</title>
+        <meta
+          name="description"
+          content="Get the edge you need to defeat all the bosses in your game with TOF Boss Respawn. This platform makes it easy to track respawn times, so you can plan your strategy and come out on top."
+          key="desc"
+        />
+        <meta property="og:title" content="TOF Boss Respawn Time" key="title" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div className="min-h-screen bg-[#181826]">
