@@ -13,11 +13,12 @@ interface optionProps {
 }
 
 interface InputProps {
-    id: string;
-    onChange: any;
-    value: PropsValue<optionProps>;
-    label: string;
-    options: Array<optionParentProps>;
+    id: string
+    onChange: any
+    value: PropsValue<optionProps>
+    label: string
+    isMulti?: boolean
+    options: Array<optionParentProps>
 }
 
 const dot = (color = 'transparent') => ({
@@ -74,11 +75,12 @@ const colourStyles: StylesConfig<optionProps> = {
     })
 };
 
-const Input: React.FC<InputProps> = ({ id, onChange, value, label, options }) => {
+const Input: React.FC<InputProps> = ({ id, onChange, value, label, isMulti, options }) => {
     return (
         <div className='w-full'>
             <Select
                 id={id}
+                isMulti={isMulti}
                 instanceId={id}
                 defaultValue={value}
                 onChange={onChange}

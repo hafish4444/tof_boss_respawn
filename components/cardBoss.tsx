@@ -9,29 +9,18 @@ interface propsCardBoss {
   notify: () => void
 }
 
+// Pixel GIF code adapted from https://stackoverflow.com/a/33919020/266535
+const keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+const triplet = (e1: number, e2: number, e3: number) =>
+keyStr.charAt(e1 >> 2) +
+keyStr.charAt(((e1 & 3) << 4) | (e2 >> 4)) +
+keyStr.charAt(((e2 & 15) << 2) | (e3 >> 6)) +
+keyStr.charAt(e3 & 63)
+const rgbDataURL = (r: number, g: number, b: number) => `data:image/gif;base64,R0lGODlhAQABAPAA${triplet(0, r, g) + triplet(b, 255, 255)}/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`
+
 export default function CardBoss(props: propsCardBoss) {
   const { boss, disabledCheckBoss, handleCheckBoss, notify } = props
   const [time, setTime] = useState(new Date());
-
-  
-// Pixel GIF code adapted from https://stackoverflow.com/a/33919020/266535
-  const keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
-  const triplet = (e1: number, e2: number, e3: number) =>
-    keyStr.charAt(e1 >> 2) +
-    keyStr.charAt(((e1 & 3) << 4) | (e2 >> 4)) +
-    keyStr.charAt(((e2 & 15) << 2) | (e3 >> 6)) +
-    keyStr.charAt(e3 & 63)
-
-  const rgbDataURL = (r: number, g: number, b: number) =>
-    `data:image/gif;base64,R0lGODlhAQABAPAA${triplet(0, r, g) + triplet(b, 255, 255)}/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   let textRespawn = ""
   const respawnTimeDiff = moment(time).diff(boss.respawnTime, 'second')
@@ -41,7 +30,7 @@ export default function CardBoss(props: propsCardBoss) {
   if (respawnTimeSecond < 60 && respawnTimeSecond > 0) {
     textRespawn = `Respawn in ${respawnTimeSecond} seconds`
   } else {
-    if (respawnTimeMinute > 1) {
+    if (respawnTimeMinute > 1 || (respawnTimeMinute * -1) > 1) {
       textRespawn = `Respawn in ${respawnTimeMinute} minutes`
     } else {
       textRespawn = `Respawn in ${respawnTimeMinute} minute`
@@ -54,9 +43,17 @@ export default function CardBoss(props: propsCardBoss) {
   }
 
   const respawnBossToClipboard = () => {
-    navigator.clipboard.writeText(`${boss.boss?.name} CH${boss.channel} ${textRespawn}`);
+    navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] ${textRespawn}`);
     notify()
   }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="bg-[#212134] text-white rounded border border-[#242442] shadow-lg dark:shadow-none">
@@ -67,6 +64,11 @@ export default function CardBoss(props: propsCardBoss) {
           placeholder="blur"
           blurDataURL={rgbDataURL(55, 100, 160)}
           fill
+          sizes="(max-width: 638px) 100vw,        
+                 (max-width: 768px) 50vw,
+                 (max-width: 1280px) 33vw,
+                 (max-width: 1536px) 25vw,
+                 20vw"
         />
       </div>
       <div className="px-4 my-2">

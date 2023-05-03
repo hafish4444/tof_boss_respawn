@@ -14,7 +14,9 @@ interface PropsPreview {
 
 export async function getServerSideProps() {
   try {
-    const bossRespawn = await ApiBoss.getBossTimestamp()
+    const bossRespawn = await ApiBoss.getBossTimestamp({
+      bossList: []
+    })
     return {
       props: { bossRespawnList: JSON.parse(JSON.stringify(bossRespawn)) }
     }
@@ -32,7 +34,9 @@ export default function Home(props: PropsPreview) {
   const _bossTimeStampList: Array<BossRespawn> = []
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
   const getBossTimeStampList = async () => {
-    const bossRespawn = await ApiBoss.getBossTimestamp()
+    const bossRespawn = await ApiBoss.getBossTimestamp({
+      bossList: []
+    })
     return bossRespawn
   }
 
@@ -58,7 +62,7 @@ export default function Home(props: PropsPreview) {
       clearInterval(interval);
       pusher.unsubscribe("tof-boss-respawn-realtime");
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   
   const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 30 && !boss.isCheck)
   return (

@@ -1,4 +1,5 @@
 import BossRespawn from "../../types/bossRespawn";
+import SearchParam from "../../types/searchParam";
 
 const apiUrl = process.env.NEXT_PUBLIC_DOMAIN;
 
@@ -7,8 +8,14 @@ const myAPI = {
         const responseBoss = await fetch(`${apiUrl}/api/getBossList`);
         return await responseBoss.json();
     },
-    getBossTimestamp: async() => {
-        const responseBossRespawn = await fetch(`${apiUrl}/api/getBossTimestamp`);
+    getBossTimestamp: async(searchParam: SearchParam) => {
+        const responseBossRespawn = await fetch(`${apiUrl}/api/getBossTimestamp`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(searchParam)
+        });
         return await responseBossRespawn.json();
     },
     checkedBoss: async(_id: string, isCheck: boolean) => {
