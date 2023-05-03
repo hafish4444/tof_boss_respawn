@@ -1,6 +1,7 @@
 import moment from "moment"
 import dynamic from 'next/dynamic'
 import { v4 as uuidv4 } from 'uuid';
+import Pusher from "pusher-js";
 
 import Head from 'next/head'
 import { useState, useEffect, lazy, Suspense } from 'react';
@@ -114,8 +115,9 @@ export default function Home(props: PropsHome) {
         }
         let response: any = await ApiBoss.addBossTimeStamp(newBoss)
         newBoss._id = response.insertedId
+      } else {
+        setDataBossTimeStamp()
       }
-      setDataBossTimeStamp()
     }
   }
   const handleChangeBossSearch = async (data: any) => {
@@ -144,6 +146,10 @@ export default function Home(props: PropsHome) {
   }, [bossSearch, isOnlyMyStamp]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_KEY as string, {
+      cluster: process.env.PUSHER_APP_CLUSTER as string
+    });
+
     getUserId()
     if (typeof window !== "undefined") {
       setBossTimeStampList(bossRespawnList)
@@ -151,8 +157,14 @@ export default function Home(props: PropsHome) {
     const interval = setInterval(() => {
       setTime(new Date());
     }, 1000);
-
-    return () => clearInterval(interval);
+    const channel = pusher.subscribe("tof-boss-respawn-realtime");
+    channel.bind("boss-stamp-update", async function (data: any) {
+      setDataBossTimeStamp()
+    });
+    return () => {
+      clearInterval(interval);
+      pusher.unsubscribe("tof-boss-respawn-realtime");
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 10 && !boss.isCheck)
