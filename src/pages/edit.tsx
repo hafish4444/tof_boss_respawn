@@ -1,23 +1,23 @@
 import moment from "moment"
+import dynamic from 'next/dynamic'
 import { v4 as uuidv4 } from 'uuid';
 
 import Head from 'next/head'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import Image from "next/image"
 
-import Input from "../../components/input";
 import Select from "../../components/select";
-import CardBoss from "../../components/cardBoss";
+const CardBoss = dynamic(import("../../components/cardBoss"))
+const InputStampBoss = lazy(() => import('../../components/inputStampBoss'));
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Boss from "../../types/boss"
 import BossRespawn from "../../types/bossRespawn"
-
-import ApiBoss from "@/helpers/api/boss"
 import SearchParam from "../../types/searchParam";
 
+import ApiBoss from "@/helpers/api/boss"
 interface PropsHome {
   bossList: Boss[]
   bossRespawnList: BossRespawn[]
@@ -85,15 +85,10 @@ export default function Home(props: PropsHome) {
   const bossOptions: optionParentProps[] = getOptionBoss()
 
   const [time, setTime] = useState(new Date());
-  const [channelSelected, setChannelSelected] = useState<number>(1);
-  const [overTimeSelected, setOverTimeSelected] = useState<number>(0);
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
-  const [bossSelected, setBossSelected] = useState<optionProps>(bossOptions[0].options[0]);
+
   const [bossSearch, setBossSearch] = useState<optionProps[]>([]);
 
-  const handleChangeBoss = (data: any) => {
-    setBossSelected(data);
-  };
   const handleCheckBoss = async (boss: BossRespawn, isFind: Boolean) => {
     let _bossTimeStampList = bossTimeStampList
     const bossIndex = _bossTimeStampList.findIndex((_boss: BossRespawn) => _boss._id === boss._id)
@@ -118,14 +113,6 @@ export default function Home(props: PropsHome) {
       setDataBossTimeStamp()
     }
   }
-  const handleChangeChannel = (e: any) => {
-    const value = parseInt(e.target.value)
-    setChannelSelected(value);
-  };
-  const handleChangeOverTime = (e: any) => {
-    const value = e.target.value
-    setOverTimeSelected(value);
-  };
   const handleChangeBossSearch = async (data: any) => {
     setBossSearch(data);
   };
@@ -133,29 +120,6 @@ export default function Home(props: PropsHome) {
   useEffect(() => {
     setDataBossTimeStamp()
   }, [bossSearch]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const stampBossRespawn = async () => {
-    const boss = bossList.find(boss => boss._id === bossSelected?.value) ?? {
-      name: "",
-      _id: "",
-      imageUrl: "",
-    }
-    const currentDate = moment().add((overTimeSelected ?? 0) * -1, 'minutes').format('YYYY-MM-DD HH:mm:ss')
-    const newBoss: BossRespawn = {
-      bossId: boss._id ?? "",
-      channel: channelSelected,
-      dieTime: new Date(currentDate),
-      respawnTime: new Date(moment(currentDate).add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
-      isCheck: false
-    }
-    
-    let response: any = await ApiBoss.addBossTimeStamp(newBoss)
-    newBoss._id = response.insertedId
-    await setDataBossTimeStamp()
-
-    // Reset Input
-    setOverTimeSelected(0)
-  }
 
   const setDataBossTimeStamp = async () => {
     const bossTimeStampList = await getBossTimeStampList()
@@ -259,43 +223,16 @@ export default function Home(props: PropsHome) {
             <button className="bg-green-600 disabled:bg-green-800 disabled:text-slate-200 disabled:cursor-not-allowed  text-white rounded-sm p-2 text-center h-[34px] mr-1 text-[12px]"
               onClick={respawnAllBossWithTimeToClipboard} 
               disabled={displayBossTimeStampList.length === 0}
-              >
-                Respawn all boss
-              With time</button>
+            >
+              Respawn all boss With time
+            </button>
           </div>
           <hr className="my-5" />
           <div className="text-white mb-3 text-3xl font-bold">Boss Timestamp</div>
-          <div className="w-full max-w-sm mb-4">
-            <div className="md:flex md:items-center mb-2">
-              <Select
-                id="bossInput"
-                value={bossSelected}
-                label="Boss Name"
-                onChange={handleChangeBoss}
-                options={bossOptions}
-              />
-            </div>
-            <div className="md:flex md:items-center mb-2">
-              <Input
-                id="channelInput"
-                type="number"
-                value={channelSelected}
-                label="Channel"
-                onChange={handleChangeChannel}
-              />
-            </div>
-            <div className="md:flex md:items-center mb-2">
-              <Input
-                id="overTimeInput"
-                type="number"
-                value={overTimeSelected}
-                label="Over Time"
-                onChange={handleChangeOverTime}
-              />
-            </div>
-            <button className="bg-[#A32951] rounded-md shadow-lg dark:shadow-none  text-white p-4 mt-2" onClick={stampBossRespawn}>Stamp</button>
-          </div>
-          <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
+          <Suspense fallback={<div>Loading...</div>}>
+            <InputStampBoss bossOptions={bossOptions} setDataBossTimeStamp={setDataBossTimeStamp} />
+            <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
+          </Suspense>
         </div>
         <ToastContainer
           position="bottom-left"
