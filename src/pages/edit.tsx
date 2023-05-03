@@ -249,7 +249,7 @@ export default function Home(props: PropsHome) {
             { 
               displayBossTimeStampList.length > 0 ? 
                 displayBossTimeStampList.map((boss, index) => (
-                  <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} notify={notify}/>
+                  <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} notify={notify} disabledCheckBoss={boss.createdBy !== userId && moment().diff(boss.dieTime, 'minutes') < 55} />
                 ))
               : <div className="self-center text-white text-xl col-span-12 text-center">
                   <Image
