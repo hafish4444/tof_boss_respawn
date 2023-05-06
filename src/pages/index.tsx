@@ -1,7 +1,7 @@
 import moment from "moment"
 import dynamic from 'next/dynamic'
 import { v4 as uuidv4 } from 'uuid';
-import Pusher from "pusher-js";
+import Pusher, { Channel } from "pusher-js";
 
 import Head from 'next/head'
 import { useState, useEffect, lazy, Suspense } from 'react';
@@ -55,6 +55,16 @@ export async function getServerSideProps() {
 export default function Home(props: PropsHome) {
   const { bossList, bossRespawnList } = props
 
+  const _bossTimeStampList: Array<BossRespawn> = []
+
+  const [time, setTime] = useState(new Date());
+  const [userId, setUserId] = useState<string>("");
+  const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
+  const [pusherChannel, setPusherChannel] = useState<Channel>();
+
+  const [bossSearch, setBossSearch] = useState<optionProps[]>([]);
+  const [isOnlyMyStamp, setIsOnlyMyStamp] = useState<boolean>(false);
+
   const getOptionBoss = () => {
     const bossOptions: optionParentProps[] = []
     for (let index = 0; index < bossList.length; index++) {
@@ -75,6 +85,8 @@ export default function Home(props: PropsHome) {
     }
     return bossOptions
   }
+  const bossOptions: optionParentProps[] = getOptionBoss()
+
   const getBossTimeStampList = async () => {
     const searchParam: SearchParam = {
       bossList: bossSearch.map(boss => boss.value),
@@ -83,16 +95,6 @@ export default function Home(props: PropsHome) {
     const bossRespawn = await ApiBoss.getBossTimestamp(searchParam)
     return bossRespawn
   }
-
-  const _bossTimeStampList: Array<BossRespawn> = []
-  const bossOptions: optionParentProps[] = getOptionBoss()
-
-  const [time, setTime] = useState(new Date());
-  const [userId, setUserId] = useState<string>("");
-  const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
-
-  const [bossSearch, setBossSearch] = useState<optionProps[]>([]);
-  const [isOnlyMyStamp, setIsOnlyMyStamp] = useState<boolean>();
 
   const handleCheckBoss = async (boss: BossRespawn, isFind: Boolean) => {
     let _bossTimeStampList = bossTimeStampList
@@ -158,14 +160,22 @@ export default function Home(props: PropsHome) {
       setTime(new Date());
     }, 1000);
     const channel = pusher.subscribe("tof-boss-respawn-realtime");
-    channel.bind("boss-stamp-update", async function (data: any) {
-      setDataBossTimeStamp()
-    });
+    setPusherChannel(channel)
+
     return () => {
       clearInterval(interval);
       pusher.unsubscribe("tof-boss-respawn-realtime");
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  
+    useEffect(() => {
+      if(pusherChannel && pusherChannel.bind){
+        pusherChannel.unbind("boss-stamp-update");
+        pusherChannel.bind("boss-stamp-update", async function (data: any) {
+          setDataBossTimeStamp()
+        });
+      }
+    }, [pusherChannel, bossSearch, isOnlyMyStamp]);
 
   const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 15 && !boss.isCheck)
 
@@ -201,7 +211,7 @@ export default function Home(props: PropsHome) {
   return (
     <>
       <Head>
-        <title>TOF Boss Respawn Time Edit</title>
+        <title>TOF Boss Respawn Time</title>
         <meta
           name="description"
           content="Get the edge you need to defeat all the bosses in your game with TOF Boss Respawn. This platform makes it easy to track respawn times, so you can plan your strategy and come out on top."
