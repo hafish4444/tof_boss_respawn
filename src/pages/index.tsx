@@ -184,6 +184,29 @@ export default function Home(props: PropsHome) {
     notify()
   }
 
+  const respawnAllBossShotVersionToClipboard = () => {
+    let beforeBossId = ""
+    let txtBoss = ""
+    let index = 0
+    for (const boss of displayBossTimeStampList) {
+      const isMulti = index + 1 === displayBossTimeStampList.length || displayBossTimeStampList[index + 1].bossId !== boss.bossId
+      if(boss.bossId !== beforeBossId) {
+        txtBoss += `${boss.boss?.name}(`
+      }
+      txtBoss += `${boss.channel} ${'20:20'}`
+      if(isMulti) {
+        txtBoss += `) `
+      } else {
+        txtBoss += `|`
+      }
+      beforeBossId = boss.bossId
+      index++
+    }
+    console.log(txtBoss)
+    navigator.clipboard.writeText(`${txtBoss}`);
+    notify()
+  }
+
   const notify = () => {
     toast('⌨ Copy to clipboard!', {
       position: "bottom-left",
