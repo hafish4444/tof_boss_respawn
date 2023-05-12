@@ -54,8 +54,6 @@ export default function InputStampBoss(props: InputProps) {
 
         let response: any = await ApiBoss.addBossTimeStamp(newBoss)
         newBoss._id = response.insertedId
-        await setDataBossTimeStamp()
-
         // Reset Input
         setOverTimeSelected(0)
     }

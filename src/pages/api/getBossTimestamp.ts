@@ -21,7 +21,7 @@ export default async function handler(req :any, res: any) {
                 {
                   $gte: [
                     { $toDate: "$respawnTime" },
-                    { $toDate: moment().subtract(10, 'minutes').toDate() }
+                    { $toDate: moment().subtract(15, 'minutes').toDate() }
                   ]
                 },
                 bossIds.length 
