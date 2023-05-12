@@ -4,7 +4,8 @@ import { ObjectId } from "mongodb";
 
 export default async function handler(req :any, res: any) {
   try {
-    const { bossList, userId } = req.body
+    console.log(req.body)
+    const { bossList, userId, channel, limit } = req.body
     const bossIds = bossList.map((id: string) => new ObjectId(id)); // convert strings to ObjectIds
     const client = await clientPromise;
     const db = client.db("tof_boss_stamp");
@@ -16,6 +17,7 @@ export default async function handler(req :any, res: any) {
           $match: {
             isCheck: false,
             createdBy: userId ? userId : { $ne: "" },
+            channel: channel ? channel : { $ne: "" },
             $expr: {
               $and: [
                 {
@@ -42,7 +44,7 @@ export default async function handler(req :any, res: any) {
           }
         },
         {
-          $limit: 40
+          $limit: limit && limit > 0 ? parseInt(limit) : 40
         },
         {
           $lookup: {

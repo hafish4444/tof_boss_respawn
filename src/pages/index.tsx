@@ -19,6 +19,7 @@ import BossRespawn from "../../types/bossRespawn"
 import SearchParam from "../../types/searchParam";
 
 import ApiBoss from "@/helpers/api/boss"
+import Input from "../../components/input";
 interface PropsHome {
   bossList: Boss[]
   bossRespawnList: BossRespawn[]
@@ -37,7 +38,9 @@ export async function getServerSideProps() {
     const bosses = await ApiBoss.getBossList()
     const bossRespawn = await ApiBoss.getBossTimestamp({
       bossList: [],
-      userId: ""
+      userId: "",
+      channel: "",
+      limit: 40
     })
     return {
       props: { bossList: JSON.parse(JSON.stringify(bosses)), bossRespawnList: JSON.parse(JSON.stringify(bossRespawn)) }
@@ -64,6 +67,18 @@ export default function Home(props: PropsHome) {
 
   const [bossSearch, setBossSearch] = useState<optionProps[]>([]);
   const [isOnlyMyStamp, setIsOnlyMyStamp] = useState<boolean>(false);
+  const [channelSearch, setChannelSearch] = useState<number|"">("");
+  const [limitSearch, setLimitSearch] = useState<number>(40);
+  const [isExpandAdvanceSearch, setIsExpandAdvanceSearch] = useState<boolean>(false);
+  
+  const handleChangeChannelSearch = (e: any) => {
+    const value = e.target.value
+    setChannelSearch(value);
+  }
+  const handleChangeLimitSearch = (e: any) => {
+    const value = e.target.value
+    setLimitSearch(value ?? 0);
+  }
 
   const getOptionBoss = () => {
     const bossOptions: optionParentProps[] = []
@@ -90,7 +105,9 @@ export default function Home(props: PropsHome) {
   const getBossTimeStampList = async () => {
     const searchParam: SearchParam = {
       bossList: bossSearch.map(boss => boss.value),
-      userId: isOnlyMyStamp ? userId : ""
+      userId: isOnlyMyStamp ? userId : "",
+      channel: channelSearch,
+      limit: limitSearch
     }
     const bossRespawn = await ApiBoss.getBossTimestamp(searchParam)
     return bossRespawn
@@ -128,6 +145,9 @@ export default function Home(props: PropsHome) {
   const handleClickOnlyMyStamp = async () => {
     setIsOnlyMyStamp(!isOnlyMyStamp)
   }
+  const handleClickAdvanceSearch = async () => {
+    setIsExpandAdvanceSearch(!isExpandAdvanceSearch)
+  }
 
   const setDataBossTimeStamp = async () => {
     const bossTimeStampList = await getBossTimeStampList()
@@ -145,7 +165,7 @@ export default function Home(props: PropsHome) {
 
   useEffect(() => {
     setDataBossTimeStamp()
-  }, [bossSearch, isOnlyMyStamp]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [bossSearch, isOnlyMyStamp, channelSearch, limitSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const pusher = new Pusher(process.env.NEXT_PUBLIC_KEY as string, {
@@ -256,7 +276,7 @@ export default function Home(props: PropsHome) {
                 options={bossOptions}
               />
             </div>
-            <div>
+            <div className="flex justify-between">
               <button 
                 className={
                   `
@@ -276,6 +296,62 @@ export default function Home(props: PropsHome) {
               >
                   Only My Stamp
               </button>
+              <div className="relative">
+                <button 
+                  className={
+                    `
+                      hidden
+                      transition-all
+                      border-2
+                      border-[#6346AA]
+                      text-white
+                      rounded-sm
+                      p-2
+                      text-center
+                      mr-1
+                      text-[12px]
+                      ${isExpandAdvanceSearch ? "bg-[#6346AA]" : undefined}
+                    `
+                  }
+                  onClick={handleClickAdvanceSearch} 
+                >
+                    Advance Search
+                </button>
+                <div className={
+                    `
+                      absolute
+                      bottom-[-100px]
+                      right-1
+                      text-black
+                      bg-white
+                      w-[200px]
+                      z-10
+                      ${!isExpandAdvanceSearch ? "hidden" : undefined}
+                    `
+                  }
+                >
+                  <div className="p-1">
+                    <div className="md:flex md:items-center mb-2">
+                        <Input
+                            id="channelSearchInput"
+                            type="number"
+                            value={channelSearch}
+                            label="Channel"
+                            onChange={handleChangeChannelSearch}
+                        />
+                    </div>
+                    <div className="md:flex md:items-center">
+                        <Input
+                            id="channelSearchInput"
+                            type="number"
+                            value={limitSearch}
+                            label="Limit"
+                            onChange={handleChangeLimitSearch}
+                        />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[341px]">
