@@ -86,7 +86,7 @@ export default function Home(props: PropsPreview) {
       </Head>
       <div className="min-h-screen bg-[#181826]">
         <div className="max-w-8xl mx-auto px-4 py-8 sm:px-6 md:px-8">
-          <div className="grid  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[341px]">
+          <div className="grid  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[344px]">
             { 
               displayBossTimeStampList.length > 0 ? 
                 displayBossTimeStampList.map((boss, index) => (

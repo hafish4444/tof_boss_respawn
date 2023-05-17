@@ -379,7 +379,7 @@ export default function Home(props: PropsHome) {
               </div>
             </div>
           </div>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[341px]">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[344px]">
             {
               displayBossTimeStampList.length > 0 ?
                 displayBossTimeStampList.map((boss, index) => (
