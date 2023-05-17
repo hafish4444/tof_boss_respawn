@@ -49,7 +49,7 @@ export default async function handler(req: { body: InputProps }, res: any) {
           }
         },
         {
-          $limit: limit && limit > 0 ? parseInt(limit) : 40
+          $limit: limit && limit > 0 ? limit : 40
         },
         {
           $lookup: {
