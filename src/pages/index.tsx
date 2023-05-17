@@ -203,10 +203,6 @@ export default function Home(props: PropsHome) {
   useEffect(() => {
     window.onclick = (event: MouseEvent) => {
       const targetNode = event.target as Node;
-      console.log('targetNode', targetNode === advSearchBtnRef.current)
-      console.log('isExpandAdvanceSearch', isExpandAdvanceSearch)
-      console.log('advSearchRef.current', !(advSearchRef.current && advSearchRef.current.contains(targetNode) && targetNode !== advSearchRef.current))
-      console.log('advSearchBtnRef.current', !(advSearchBtnRef.current && targetNode !== advSearchBtnRef.current))
       if (isExpandAdvanceSearch && 
         (
           !(
@@ -220,7 +216,6 @@ export default function Home(props: PropsHome) {
           )
         )
       ) {
-        console.log('test')
         setIsExpandAdvanceSearch(false)
       }
     };
@@ -261,7 +256,6 @@ export default function Home(props: PropsHome) {
       beforeBossId = boss.bossId
       index++
     }
-    console.log(txtBoss)
     navigator.clipboard.writeText(`${txtBoss}`);
     notify()
   }
@@ -424,7 +418,7 @@ export default function Home(props: PropsHome) {
               onClick={respawnAllBossToClipboard}
               disabled={displayBossTimeStampList.length === 0}
             >
-              Respawn all boss
+              Respawn Time all boss
             </button>
             <button className="
                 transition-all
@@ -445,7 +439,28 @@ export default function Home(props: PropsHome) {
               onClick={respawnAllBossWithTimeToClipboard}
               disabled={displayBossTimeStampList.length === 0}
             >
-              Respawn all boss With time
+              Respawn Time all boss With time
+            </button>
+            <button className="
+                transition-all
+                bg-green-600
+                hover:bg-green-700
+                disabled:bg-green-800
+                disabled:text-slate-200
+                disabled:cursor-not-allowed
+
+                text-white
+                rounded-sm
+                p-2
+                text-center
+                h-[34px]
+                mr-1
+                text-[12px]
+              "
+              onClick={respawnAllBossShotVersionToClipboard}
+              disabled={displayBossTimeStampList.length === 0}
+            >
+              Respawn Time all boss With time But Short Than 
             </button>
           </div>
           <hr className="my-5" />
