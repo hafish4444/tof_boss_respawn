@@ -464,7 +464,7 @@ export default function Home(props: PropsHome) {
             </button>
           </div>
           <hr className="my-5" />
-          <div className="text-white mb-3 text-3xl font-bold">Boss Timestamp</div>
+          <h1 className="text-white mb-3 text-3xl font-bold">Boss Timestamp</h1>
           <Suspense fallback={<div>Loading...</div>}>
             <InputStampBoss bossOptions={bossOptions} setDataBossTimeStamp={setDataBossTimeStamp} userId={userId} />
             <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
