@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Pusher, { Channel } from "pusher-js";
 
 import Head from 'next/head'
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense, useRef } from 'react';
 import Image from "next/image"
 
 import Select from "../../components/select";
@@ -45,11 +45,11 @@ export async function getServerSideProps() {
     return {
       props: { bossList: JSON.parse(JSON.stringify(bosses)), bossRespawnList: JSON.parse(JSON.stringify(bossRespawn)) }
     }
-  } catch(e) {
+  } catch (e) {
     console.error(e);
   }
   const defaultProps: PropsHome = {
-    bossList: [], 
+    bossList: [],
     bossRespawnList: []
   }
   return defaultProps
@@ -67,13 +67,15 @@ export default function Home(props: PropsHome) {
 
   const [bossSearch, setBossSearch] = useState<optionProps[]>([]);
   const [isOnlyMyStamp, setIsOnlyMyStamp] = useState<boolean>(false);
-  const [channelSearch, setChannelSearch] = useState<number|"">("");
+  const [channelSearch, setChannelSearch] = useState<number | "">("");
   const [limitSearch, setLimitSearch] = useState<number>(40);
   const [isExpandAdvanceSearch, setIsExpandAdvanceSearch] = useState<boolean>(false);
-  
+  const advSearchRef = useRef<HTMLInputElement>(null);
+  const advSearchBtnRef = useRef<HTMLButtonElement>(null);
+
   const handleChangeChannelSearch = (e: any) => {
     const value = e.target.value
-    setChannelSearch(value);
+    setChannelSearch(parseInt(value));
   }
   const handleChangeLimitSearch = (e: any) => {
     const value = e.target.value
@@ -187,15 +189,42 @@ export default function Home(props: PropsHome) {
       pusher.unsubscribe("tof-boss-respawn-realtime");
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-  
-    useEffect(() => {
-      if(pusherChannel && pusherChannel.bind){
-        pusherChannel.unbind("boss-stamp-update");
-        pusherChannel.bind("boss-stamp-update", async function (data: any) {
-          setDataBossTimeStamp()
-        });
+
+  useEffect(() => {
+    if (pusherChannel && pusherChannel.bind) {
+      pusherChannel.unbind("boss-stamp-update");
+      pusherChannel.bind("boss-stamp-update", async function (data: any) {
+        setDataBossTimeStamp()
+      });
+    }
+  }, [pusherChannel, bossSearch, isOnlyMyStamp]);
+
+
+  useEffect(() => {
+    window.onclick = (event: MouseEvent) => {
+      const targetNode = event.target as Node;
+      console.log('targetNode', targetNode === advSearchBtnRef.current)
+      console.log('isExpandAdvanceSearch', isExpandAdvanceSearch)
+      console.log('advSearchRef.current', !(advSearchRef.current && advSearchRef.current.contains(targetNode) && targetNode !== advSearchRef.current))
+      console.log('advSearchBtnRef.current', !(advSearchBtnRef.current && targetNode !== advSearchBtnRef.current))
+      if (isExpandAdvanceSearch && 
+        (
+          !(
+            advSearchRef.current &&
+            advSearchRef.current.contains(targetNode) &&
+            targetNode !== advSearchRef.current
+          ) &&
+          !(
+            advSearchBtnRef.current &&
+            targetNode === advSearchBtnRef.current
+          )
+        )
+      ) {
+        console.log('test')
+        setIsExpandAdvanceSearch(false)
       }
-    }, [pusherChannel, bossSearch, isOnlyMyStamp]);
+    };
+  }, [isExpandAdvanceSearch]);
 
   const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 15 && !boss.isCheck)
 
@@ -220,11 +249,11 @@ export default function Home(props: PropsHome) {
     let index = 0
     for (const boss of displayBossTimeStampList) {
       const isMulti = index + 1 === displayBossTimeStampList.length || displayBossTimeStampList[index + 1].bossId !== boss.bossId
-      if(boss.bossId !== beforeBossId) {
+      if (boss.bossId !== beforeBossId) {
         txtBoss += `${boss.boss?.name}(`
       }
       txtBoss += `${boss.channel} ${'20:20'}`
-      if(isMulti) {
+      if (isMulti) {
         txtBoss += `) `
       } else {
         txtBoss += `|`
@@ -277,7 +306,7 @@ export default function Home(props: PropsHome) {
               />
             </div>
             <div className="flex justify-between">
-              <button 
+              <button
                 className={
                   `
                     transition-all
@@ -292,15 +321,15 @@ export default function Home(props: PropsHome) {
                     ${isOnlyMyStamp ? "bg-[#6346AA]" : undefined}
                   `
                 }
-                onClick={handleClickOnlyMyStamp} 
+                onClick={handleClickOnlyMyStamp}
               >
-                  Only My Stamp
+                Only My Stamp
               </button>
               <div className="relative">
-                <button 
+                <button
+                  ref={advSearchBtnRef}
                   className={
                     `
-                      hidden
                       transition-all
                       border-2
                       border-[#6346AA]
@@ -313,11 +342,13 @@ export default function Home(props: PropsHome) {
                       ${isExpandAdvanceSearch ? "bg-[#6346AA]" : undefined}
                     `
                   }
-                  onClick={handleClickAdvanceSearch} 
+                  onClick={handleClickAdvanceSearch}
                 >
-                    Advance Search
+                  Advance Search
                 </button>
-                <div className={
+                <div
+                  ref={advSearchRef}
+                  className={
                     `
                       absolute
                       bottom-[-100px]
@@ -332,22 +363,22 @@ export default function Home(props: PropsHome) {
                 >
                   <div className="p-1">
                     <div className="md:flex md:items-center mb-2">
-                        <Input
-                            id="channelSearchInput"
-                            type="number"
-                            value={channelSearch}
-                            label="Channel"
-                            onChange={handleChangeChannelSearch}
-                        />
+                      <Input
+                        id="channelSearchInput"
+                        type="number"
+                        value={channelSearch}
+                        label="Channel"
+                        onChange={handleChangeChannelSearch}
+                      />
                     </div>
                     <div className="md:flex md:items-center">
-                        <Input
-                            id="channelSearchInput"
-                            type="number"
-                            value={limitSearch}
-                            label="Limit"
-                            onChange={handleChangeLimitSearch}
-                        />
+                      <Input
+                        id="channelSearchInput"
+                        type="number"
+                        value={limitSearch}
+                        label="Limit"
+                        onChange={handleChangeLimitSearch}
+                      />
                     </div>
                   </div>
                 </div>
@@ -355,12 +386,12 @@ export default function Home(props: PropsHome) {
             </div>
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[341px]">
-            { 
-              displayBossTimeStampList.length > 0 ? 
+            {
+              displayBossTimeStampList.length > 0 ?
                 displayBossTimeStampList.map((boss, index) => (
                   <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} notify={notify} disabledCheckBoss={boss.createdBy !== userId && moment().diff(boss.dieTime, 'minutes') < 59} />
                 ))
-              : <div className="self-center text-white text-xl col-span-12 text-center">
+                : <div className="self-center text-white text-xl col-span-12 text-center">
                   <Image
                     src={"/nya.png"}
                     alt={`nya`}
@@ -390,7 +421,7 @@ export default function Home(props: PropsHome) {
                 mr-1
                 text-[12px]
               "
-              onClick={respawnAllBossToClipboard} 
+              onClick={respawnAllBossToClipboard}
               disabled={displayBossTimeStampList.length === 0}
             >
               Respawn all boss
@@ -411,7 +442,7 @@ export default function Home(props: PropsHome) {
                 mr-1
                 text-[12px]
               "
-              onClick={respawnAllBossWithTimeToClipboard} 
+              onClick={respawnAllBossWithTimeToClipboard}
               disabled={displayBossTimeStampList.length === 0}
             >
               Respawn all boss With time

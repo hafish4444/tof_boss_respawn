@@ -1,10 +1,15 @@
 import moment from "moment";
 import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
+interface InputProps {
+  bossList: [];
+  userId: string;
+  channel: number;
+  limit: number;
+}
 
-export default async function handler(req :any, res: any) {
+export default async function handler(req: { body: InputProps }, res: any) {
   try {
-    console.log(req.body)
     const { bossList, userId, channel, limit } = req.body
     const bossIds = bossList.map((id: string) => new ObjectId(id)); // convert strings to ObjectIds
     const client = await clientPromise;
