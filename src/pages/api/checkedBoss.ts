@@ -1,7 +1,8 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
 import clientPromise from '../../../lib/mongodb'
 import { ObjectId } from "mongodb"
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         const client = await clientPromise;
         const db = client.db("tof_boss_stamp");

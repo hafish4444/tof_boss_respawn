@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb"
 import { pusher } from "../../../lib/pusher";
 import clientPromise from '../../../lib/mongodb'
+import { NextApiResponse } from "next";
 interface BossRespawn {
     bossId: ObjectId,
     channel: number,
@@ -9,7 +10,7 @@ interface BossRespawn {
     isCheck: boolean
 }
 
-export default async function handler(req: { body: BossRespawn }, res: any) {
+export default async function handler(req: { body: BossRespawn }, res: NextApiResponse) {
     try {
         const client = await clientPromise;
         const db = client.db("tof_boss_stamp");

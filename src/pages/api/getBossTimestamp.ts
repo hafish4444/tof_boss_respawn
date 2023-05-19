@@ -1,6 +1,7 @@
 import moment from "moment";
 import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
+import { NextApiResponse } from "next";
 interface InputProps {
   bossList: [];
   userId: string;
@@ -8,7 +9,7 @@ interface InputProps {
   limit: number;
 }
 
-export default async function handler(req: { body: InputProps }, res: any) {
+export default async function handler(req: { body: InputProps }, res: NextApiResponse) {
   try {
     const { bossList, userId, channel, limit } = req.body
     const bossIds = bossList.map((id: string) => new ObjectId(id)); // convert strings to ObjectIds
