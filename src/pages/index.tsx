@@ -72,6 +72,7 @@ export default function Home(props: PropsHome) {
   const [isExpandAdvanceSearch, setIsExpandAdvanceSearch] = useState<boolean>(false);
   const advSearchRef = useRef<HTMLInputElement>(null);
   const advSearchBtnRef = useRef<HTMLButtonElement>(null);
+  const isMountRef = useRef<boolean>(false);
 
   const handleChangeChannelSearch = (e: any) => {
     const value = e.target.value
@@ -79,7 +80,7 @@ export default function Home(props: PropsHome) {
   }
   const handleChangeLimitSearch = (e: any) => {
     const value = e.target.value
-    setLimitSearch(value ?? 0);
+    setLimitSearch(parseInt(value));
   }
 
   const getOptionBoss = () => {
@@ -152,6 +153,7 @@ export default function Home(props: PropsHome) {
   }
 
   const setDataBossTimeStamp = async () => {
+    console.log('-----------setDataBossTimeStamp-----------')
     const bossTimeStampList = await getBossTimeStampList()
     setBossTimeStampList(bossTimeStampList)
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(bossTimeStampList))
@@ -166,7 +168,10 @@ export default function Home(props: PropsHome) {
   }
 
   useEffect(() => {
-    setDataBossTimeStamp()
+    if (isMountRef.current) {
+      setDataBossTimeStamp()
+    }
+    isMountRef.current = true;
   }, [bossSearch, isOnlyMyStamp, channelSearch, limitSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
