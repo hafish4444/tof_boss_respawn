@@ -252,7 +252,7 @@ export default function Home(props: PropsHome) {
       if (boss.bossId !== beforeBossId) {
         txtBoss += `${boss.boss?.name}(`
       }
-      txtBoss += `${boss.channel} ${'20:20'}`
+      txtBoss += `${boss.channel} ${moment(boss.respawnTime).format("HH:mm")}`
       if (isMulti) {
         txtBoss += `) `
       } else {
