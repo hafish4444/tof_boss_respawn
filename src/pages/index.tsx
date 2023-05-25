@@ -20,9 +20,9 @@ import SearchParam from "../../types/searchParam";
 
 import ApiBoss from "@/helpers/api/boss"
 import Input from "../../components/input";
+import BtnSetting from "../../components/btnSetting";
 interface PropsHome {
   bossList: Boss[]
-  bossRespawnList: BossRespawn[]
 }
 interface optionParentProps {
   label: string
@@ -49,12 +49,14 @@ export async function getServerSideProps() {
 }
 
 export default function Home(props: PropsHome) {
+  const TIME_CAN_EDIT = 59;
   const { bossList } = props
 
   const _bossTimeStampList: Array<BossRespawn> = []
 
   const [time, setTime] = useState(new Date());
   const [userId, setUserId] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
   const [pusherChannel, setPusherChannel] = useState<Channel>();
 
@@ -158,6 +160,13 @@ export default function Home(props: PropsHome) {
       setUserId(userId)
     }
   }
+  const getUserName = async () => {
+    if (typeof window !== "undefined") {
+      const userName = window.localStorage.getItem('userName') ?? ""
+      window.localStorage.setItem('userName', userName)
+      setUserName(userName)
+    }
+  }
 
   useEffect(() => {
     if (isMountRef.current) {
@@ -171,8 +180,9 @@ export default function Home(props: PropsHome) {
       cluster: process.env.PUSHER_APP_CLUSTER as string
     });
 
-    getUserId()
     if (typeof window !== "undefined") {
+      getUserId()
+      getUserName()
       setDataBossTimeStamp()
     }
     const interval = setInterval(() => {
@@ -327,7 +337,6 @@ export default function Home(props: PropsHome) {
                       rounded-sm
                       p-2
                       text-center
-                      mr-1
                       text-[12px]
                       ${isExpandAdvanceSearch ? "bg-[#6346AA]" : undefined}
                     `
@@ -341,8 +350,8 @@ export default function Home(props: PropsHome) {
                   className={
                     `
                       absolute
-                      bottom-[-100px]
-                      right-1
+                      bottom-[-102px]
+                      right-0
                       text-black
                       bg-white
                       w-[200px]
@@ -379,7 +388,13 @@ export default function Home(props: PropsHome) {
             {
               displayBossTimeStampList.length > 0 ?
                 displayBossTimeStampList.map((boss, index) => (
-                  <CardBoss key={index} boss={boss} handleCheckBoss={handleCheckBoss} notify={notify} disabledCheckBoss={boss.createdBy !== userId && moment().diff(boss.dieTime, 'minutes') < 59} />
+                  <CardBoss 
+                    key={index}
+                    boss={boss}
+                    handleCheckBoss={handleCheckBoss}
+                    notify={notify}
+                    disabledCheckBoss={boss.createdBy !== userId && moment().diff(boss.dieTime, 'minutes') < TIME_CAN_EDIT}
+                  />
                 ))
                 : <div className="self-center text-white text-xl col-span-12 text-center">
                   <Image
@@ -395,7 +410,7 @@ export default function Home(props: PropsHome) {
                 </div>
             }
           </div>
-          <div className="my-4">
+          <div className="mt-5">
             <button className="
                 transition-all
                 bg-green-600
@@ -410,6 +425,7 @@ export default function Home(props: PropsHome) {
                 h-[34px]
                 mr-1
                 text-[12px]
+                mb-3
               "
               onClick={respawnAllBossToClipboard}
               disabled={displayBossTimeStampList.length === 0}
@@ -430,6 +446,7 @@ export default function Home(props: PropsHome) {
                 text-center
                 h-[34px]
                 mr-1
+                mb-3
                 text-[12px]
               "
               onClick={respawnAllBossWithTimeToClipboard}
@@ -451,6 +468,7 @@ export default function Home(props: PropsHome) {
                 text-center
                 h-[34px]
                 mr-1
+                mb-3
                 text-[12px]
               "
               onClick={respawnAllBossShotVersionToClipboard}
@@ -459,7 +477,7 @@ export default function Home(props: PropsHome) {
               Respawn Time all boss With time But Short Than 
             </button>
           </div>
-          <hr className="my-5" />
+          <hr className="mt-3 mb-4" />
           <h1 className="text-white mb-3 text-3xl font-bold">Boss Timestamp</h1>
           <Suspense fallback={<div>Loading...</div>}>
             <InputStampBoss bossOptions={bossOptions} setDataBossTimeStamp={setDataBossTimeStamp} userId={userId} />
@@ -478,6 +496,12 @@ export default function Home(props: PropsHome) {
           pauseOnHover
           theme="light"
         />
+        {/* <BtnSetting 
+          userId={userId} 
+          userName={userName} 
+          getUserName={getUserName}
+          setUserName={setUserName}
+        /> */}
       </div>
     </>
   )
