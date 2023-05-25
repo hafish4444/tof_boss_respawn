@@ -4,7 +4,6 @@ import clientPromise from "../../../../lib/mongodb";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { bossList, userId, channel, limit } = req.body
     const client = await clientPromise;
     const db = client.db("tof_boss_stamp");
     const bossTimeStamp = await db

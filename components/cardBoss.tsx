@@ -85,11 +85,14 @@ export default function CardBoss(props: propsCardBoss) {
           </div>
           {
             !disabledCheckBoss ? 
-              <div>
+              <div  className="relative">
                 <button className="rounded-full bg-green-600 p-2 text-center w-[34px] h-[34px] mr-1 text-[12px]" onClick={() => handleCheckBoss(boss, true)}>✓</button>
                 <button className="rounded-full bg-red-600 p-2 text-center w-[34px] h-[34px] text-[12px]" onClick={() => handleCheckBoss(boss, false)}>✗</button>
+                <div className="absolute text-[10px] right-0 whitespace-nowrap">
+                  By { boss.createdBy.substring(boss.createdBy.length - 12) }
+                </div>
               </div>
-            : ""
+            : <div>By { boss.createdBy.substring(boss.createdBy.length - 12) }</div>
           }
         </div>
       </div>

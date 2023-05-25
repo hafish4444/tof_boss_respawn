@@ -75,7 +75,7 @@ const colourStyles: StylesConfig<optionProps> = {
     })
 };
 
-const Input: React.FC<InputProps> = ({ id, onChange, value, label, isMulti, options }) => {
+const SelectComponent: React.FC<InputProps> = ({ id, onChange, value, label, isMulti, options }) => {
     return (
         <div className='w-full'>
             <Select
@@ -92,4 +92,4 @@ const Input: React.FC<InputProps> = ({ id, onChange, value, label, isMulti, opti
     )
 }
 
-export default Input;
+export default SelectComponent;
