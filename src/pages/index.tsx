@@ -36,27 +36,20 @@ interface optionProps {
 export async function getServerSideProps() {
   try {
     const bosses = await ApiBoss.getBossList()
-    const bossRespawn = await ApiBoss.getBossTimestamp({
-      bossList: [],
-      userId: "",
-      channel: "",
-      limit: 40
-    })
     return {
-      props: { bossList: JSON.parse(JSON.stringify(bosses)), bossRespawnList: JSON.parse(JSON.stringify(bossRespawn)) }
+      props: { bossList: JSON.parse(JSON.stringify(bosses)) }
     }
   } catch (e) {
     console.error(e);
   }
   const defaultProps: PropsHome = {
-    bossList: [],
-    bossRespawnList: []
+    bossList: []
   }
   return defaultProps
 }
 
 export default function Home(props: PropsHome) {
-  const { bossList, bossRespawnList } = props
+  const { bossList } = props
 
   const _bossTimeStampList: Array<BossRespawn> = []
 
@@ -153,7 +146,6 @@ export default function Home(props: PropsHome) {
   }
 
   const setDataBossTimeStamp = async () => {
-    console.log('-----------setDataBossTimeStamp-----------')
     const bossTimeStampList = await getBossTimeStampList()
     setBossTimeStampList(bossTimeStampList)
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(bossTimeStampList))
@@ -181,7 +173,7 @@ export default function Home(props: PropsHome) {
 
     getUserId()
     if (typeof window !== "undefined") {
-      setBossTimeStampList(bossRespawnList)
+      setDataBossTimeStamp()
     }
     const interval = setInterval(() => {
       setTime(new Date());
@@ -202,8 +194,7 @@ export default function Home(props: PropsHome) {
         setDataBossTimeStamp()
       });
     }
-  }, [pusherChannel, bossSearch, isOnlyMyStamp]);
-
+  }, [pusherChannel, bossSearch, isOnlyMyStamp]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     window.onclick = (event: MouseEvent) => {
