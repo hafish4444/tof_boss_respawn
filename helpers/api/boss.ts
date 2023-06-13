@@ -1,5 +1,8 @@
 import BossRespawn from "../../types/bossRespawn";
 import SearchParam from "../../types/searchParam";
+interface SearchParamReport {
+    bossList: Array<string>
+}
 
 const apiUrl = process.env.NEXT_PUBLIC_DOMAIN;
 
@@ -40,6 +43,26 @@ const myAPI = {
             }
         })
         return await response.json();
+    },
+    getBossTimestampReportDay: async(searchParam: SearchParamReport) => {
+        const responseBossRespawn = await fetch(`${apiUrl}/api/getBossTimestampReportDay`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(searchParam)
+        });
+        return await responseBossRespawn.json();
+    },
+    getBossTimestampReportAll: async(searchParam: SearchParamReport) => {
+        const responseBossRespawn = await fetch(`${apiUrl}/api/getBossTimestampReportAll`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(searchParam)
+        });
+        return await responseBossRespawn.json();
     }
 }
 export default myAPI
