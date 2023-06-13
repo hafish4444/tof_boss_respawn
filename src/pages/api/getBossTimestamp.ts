@@ -12,7 +12,7 @@ interface InputProps {
 export default async function handler(req: { body: InputProps }, res: NextApiResponse) {
   try {
     const { bossList, userId, channel, limit } = req.body
-    const bossIds = bossList.map((id: string) => new ObjectId(id)); // convert strings to ObjectIds
+    const bossIds = bossList?.map((id: string) => new ObjectId(id)) ?? []; // convert strings to ObjectIds
     const client = await clientPromise;
     const db = client.db("tof_boss_stamp");
 

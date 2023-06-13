@@ -62,6 +62,7 @@ export default function Home(props: PropsHome) {
 
   const [bossSearch, setBossSearch] = useState<optionProps[]>([]);
   const [isOnlyMyStamp, setIsOnlyMyStamp] = useState<boolean>(false);
+  const [loadingAPI, setLoadingAPI] = useState<boolean>(true);
   const [channelSearch, setChannelSearch] = useState<number | "">("");
   const [limitSearch, setLimitSearch] = useState<number>(40);
   const [isExpandAdvanceSearch, setIsExpandAdvanceSearch] = useState<boolean>(false);
@@ -179,11 +180,13 @@ export default function Home(props: PropsHome) {
     const pusher = new Pusher(process.env.NEXT_PUBLIC_KEY as string, {
       cluster: process.env.PUSHER_APP_CLUSTER as string
     });
-
+    
     if (typeof window !== "undefined") {
+      setLoadingAPI(true);
       getUserId()
       getUserName()
       setDataBossTimeStamp()
+      setLoadingAPI(false);
     }
     const interval = setInterval(() => {
       setTime(new Date());
@@ -386,28 +389,48 @@ export default function Home(props: PropsHome) {
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[344px]">
             {
-              displayBossTimeStampList.length > 0 ?
-                displayBossTimeStampList.map((boss, index) => (
-                  <CardBoss 
-                    key={index}
-                    boss={boss}
-                    handleCheckBoss={handleCheckBoss}
-                    notify={notify}
-                    disabledCheckBoss={boss.createdBy !== userId && moment().diff(boss.dieTime, 'minutes') < TIME_CAN_EDIT}
-                  />
-                ))
+              !loadingAPI ?
+                displayBossTimeStampList.length > 0 ?
+                  displayBossTimeStampList.map((boss, index) => (
+                    <CardBoss 
+                      key={index}
+                      boss={boss}
+                      handleCheckBoss={handleCheckBoss}
+                      notify={notify}
+                      disabledCheckBoss={boss.createdBy !== userId && moment().diff(boss.dieTime, 'minutes') < TIME_CAN_EDIT}
+                    />
+                  ))
+                  : <div className="self-center text-white text-xl col-span-12 text-center">
+                    <Image
+                      src={"/nya.png"}
+                      alt={`nya`}
+                      width={180}
+                      height={40}
+                      className="m-auto mb-3"
+                    />
+                    <div className="text-[#6B86CF] text-4xl font-extrabold mb-3">No Boss Result</div>
+                    <div className="">Please Select Boss Timestamp</div>
+                    <div>From Below Section</div>
+                  </div>
                 : <div className="self-center text-white text-xl col-span-12 text-center">
-                  <Image
-                    src={"/nya.png"}
-                    alt={`nya`}
-                    width={180}
-                    height={40}
-                    className="m-auto mb-3"
-                  />
-                  <div className="text-[#6B86CF] text-4xl font-extrabold mb-3">No Boss Result</div>
-                  <div className="">Please Select Boss Timestamp</div>
-                  <div>From Below Section</div>
-                </div>
+                    <Image
+                        src={"/nya.png"}
+                        alt={`nya`}
+                        width={180}
+                        height={40}
+                        className="m-auto mb-3"
+                      />
+                    <div className="text-[#6B86CF] text-4xl font-extrabold mb-3 inline-flex">
+                      Loading... 
+                      <Image
+                          src={"/nya.png"}
+                          alt={`nya`}
+                          width={50}
+                          height={50}
+                          className="m-auto mb-3 animate-spin border rounded-full border-[#615f58]"
+                        />
+                      </div>
+                  </div>
             }
           </div>
           <div className="mt-5">
