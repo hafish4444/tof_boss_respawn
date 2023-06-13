@@ -10,8 +10,6 @@ import Select from '../../components/select'
 import { OptionProps } from 'react-select'
 interface PropsReport {
   bossList: Boss[]
-  _bossRespawnDayList: BossRespawn[]
-  _bossRespawnAllList: BossRespawn[]
 }
 interface BossRespawnByHour {
   name: string
