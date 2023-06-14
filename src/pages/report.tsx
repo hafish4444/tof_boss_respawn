@@ -214,7 +214,7 @@ export default function Home(props: PropsReport) {
               />
             </div>
             <table className="table-full w-full">
-              <thead className='bg-[#252531]'>
+              <thead className='bg-[#252531] border-b border-gray-500'>
                 <tr>
                   <th className='p-3' align='left'>Name</th>
                   <th className='p-3'>Amount Stamp</th>
@@ -286,7 +286,7 @@ export default function Home(props: PropsReport) {
               <div className="max-w-8xl mx-auto px-4 sm:px-6 md:px-8">
                 <div className='bg-[#353541] text-white px-5 py-4 rounded'>
                     <table className="table-full w-full">
-                      <thead className='bg-[#252531]'>
+                      <thead className='bg-[#252531] border-b border-gray-500'>
                         <tr>
                           <th className='p-3' align='left'>Name</th>
                           <th className='p-3'>Channel</th>

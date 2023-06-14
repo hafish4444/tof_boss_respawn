@@ -506,6 +506,13 @@ export default function Home(props: PropsHome) {
             <InputStampBoss bossOptions={bossOptions} setDataBossTimeStamp={setDataBossTimeStamp} userId={userId} />
             <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
           </Suspense>
+          <hr className="mt-3 mb-4" />
+          <button 
+            className="transition-all bg-[#6346AA] hover:bg-[#41297e] rounded-md shadow-lg dark:shadow-none  text-white p-3 mt-2" 
+            onClick={ () => { window.location.href = "/report"} }
+          >
+            Sumary Page 🠖
+          </button>
         </div>
         <ToastContainer
           position="bottom-left"
