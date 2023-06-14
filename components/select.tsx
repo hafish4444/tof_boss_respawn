@@ -18,7 +18,7 @@ interface InputProps {
     value: PropsValue<optionProps>
     label: string
     isMulti?: boolean
-    options: Array<optionParentProps>
+    options: Array<optionParentProps> | Array<optionProps>
 }
 
 const dot = (color = 'transparent') => ({
