@@ -3,14 +3,15 @@ import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { NextApiResponse } from "next";
 interface InputProps {
-  bossList: [];
-  userId: string
+  bossList: []
+  userList: []
 }
 
 export default async function handler(req: { body: InputProps }, res: NextApiResponse) {
   try {
-    const { bossList, userId } = req.body
+    const { bossList, userList } = req.body
     const bossIds = bossList.map((id: string) => new ObjectId(id)); // convert strings to ObjectIds
+    const userIds = userList
     const client = await clientPromise;
     const db = client.db("tof_boss_stamp");
     console.log(moment().startOf('day').add(4, 'hour').format("D HH:mm:ss"))
@@ -19,7 +20,9 @@ export default async function handler(req: { body: InputProps }, res: NextApiRes
       .aggregate([
         {
           $match: {
-            createdBy: userId ? userId : { $ne: "" },
+            channel: { 
+              $ne: 0
+            },
             $expr: {
               $and: [
                 {
@@ -33,6 +36,14 @@ export default async function handler(req: { body: InputProps }, res: NextApiRes
                     $in: [
                       '$bossId',
                       bossIds
+                    ]
+                  }
+                  : {},
+                userIds.length 
+                  ? {
+                    $in: [
+                      '$createdBy',
+                      userIds
                     ]
                   }
                   : {}
@@ -61,6 +72,6 @@ export default async function handler(req: { body: InputProps }, res: NextApiRes
     res.status(200).json(bossTimeStamp);
   } catch (e) {
     console.error(e);
-    res.status(400).json({ msg: "Error retrieving boss_time_stamp" });
+    res.status(400).json({ e, msg: "Error retrieving boss_time_stamp" });
   }
 }

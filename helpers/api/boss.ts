@@ -11,6 +11,10 @@ const myAPI = {
         const responseBoss = await fetch(`${apiUrl}/api/getBossList`);
         return await responseBoss.json();
     },
+    getUserList: async() => {
+        const responseBoss = await fetch(`${apiUrl}/api/getUserList`);
+        return await responseBoss.json();
+    },
     getBossTimestamp: async(searchParam: SearchParam) => {
         const responseBossRespawn = await fetch(`${apiUrl}/api/getBossTimestamp`, {
             method: "POST",
