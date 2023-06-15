@@ -289,7 +289,7 @@ export default function Home(props: PropsHome) {
         <title>TOF Boss Respawn Time</title>
         <meta
           name="description"
-          content="Get the edge you need to defeat all the bosses in your game with TOF Boss Respawn. This platform makes it easy to track respawn times, so you can plan your strategy and come out on top."
+          content="Get the edge you need to defeat all the bosses in game tower of fantasy (TOF) with TOF Boss Respawn. This platform makes it easy to track respawn times, so you can plan your strategy and come out on top."
           key="desc"
         />
         <meta property="og:title" content="TOF Boss Respawn Time" key="title" />
