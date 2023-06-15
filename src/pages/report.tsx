@@ -80,7 +80,7 @@ export default function Home(props: PropsReport) {
   const [bossRespawnByBossAllList, setBossRespawnByBossAllList] = useState<BossRespawnByHour[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   
-  const isMountRef = useRef<boolean>(false);
+  // const isMountRef = useRef<boolean>(false);
   
   const MAX_AMOUNT = 100;
   const getOptionBoss = () => {
@@ -136,13 +136,16 @@ export default function Home(props: PropsReport) {
   
   const setDataBossTimeStamp = async () => {
     setIsLoading(true)
-    const bossTimestampReportDayList = await getBossTimestampReportDayList()
-    setBossRespawnDayList(bossTimestampReportDayList)
-    setBossRespawnByBossDayList(getBossRespawnByBossList(bossTimestampReportDayList))
-
-    const bossTimestampReportAllList = await getBossTimestampReportDayAll()
-    setBossRespawnAllList(bossTimestampReportAllList)
-    setBossRespawnByBossAllList(getBossRespawnByBossList(bossTimestampReportAllList))
+    await Promise.all([getBossTimestampReportDayList(), getBossTimestampReportDayAll()]).then((value: any[]) => {
+      const bossTimestampReportDayList = value[0]
+      const bossTimestampReportAllList = value[1]
+      
+      setBossRespawnDayList(bossTimestampReportDayList)
+      setBossRespawnByBossDayList(getBossRespawnByBossList(bossTimestampReportDayList))
+  
+      setBossRespawnAllList(bossTimestampReportAllList)
+      setBossRespawnByBossAllList(getBossRespawnByBossList(bossTimestampReportAllList))
+    })
     setIsLoading(false)
   }
   const getBossTimestampReportDayList = async () => {
@@ -172,10 +175,7 @@ export default function Home(props: PropsReport) {
   }
 
   useEffect(() => {
-    if (isMountRef.current) {
-      setDataBossTimeStamp()
-    }
-    isMountRef.current = true;
+    setDataBossTimeStamp()
   }, [bossSearch, userSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

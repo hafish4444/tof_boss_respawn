@@ -14,7 +14,7 @@ export default async function handler(req: { body: InputProps }, res: NextApiRes
     const userIds = userList
     const client = await clientPromise;
     const db = client.db("tof_boss_stamp");
-    console.log(moment().startOf('day').add(4, 'hour').format("D HH:mm:ss"))
+    // console.log(moment().startOf('day').add(4, 'hour').format("D HH:mm:ss"))
     const bossTimeStamp = await db
       .collection("boss_time_stamp")
       .aggregate([
