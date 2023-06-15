@@ -45,7 +45,7 @@ const Input: React.FC<InputProps> = ({ id, onChange, value, label, type, disable
         className="
             absolute 
             text-md
-          text-[#CCCCCC]
+          text-[#CFCFCF]
             duration-150 
             transform 
             -translate-y-2

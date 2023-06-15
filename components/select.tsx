@@ -60,7 +60,7 @@ const colourStyles: StylesConfig<optionProps> = {
         };
     },
     input: (styles) => ({ ...styles, ...dot(), color: "#FFFFFF" }),
-    placeholder: (styles) => ({ ...styles, color: "#CCCCCC" }),
+    placeholder: (styles) => ({ ...styles, color: "#CFCFCF" }),
     singleValue: (styles, { data }) => ({ ...styles, color: "#FFFFFF" }),
     dropdownIndicator: base => ({
       ...base,

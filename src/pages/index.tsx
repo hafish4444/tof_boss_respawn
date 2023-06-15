@@ -300,7 +300,7 @@ export default function Home(props: PropsHome) {
           <div className="mb-5">
             <div className="mb-3">
               <Select
-                id="bossInput"
+                id="bossInputSerch"
                 value={bossSearch}
                 label="Boss Search"
                 isMulti={true}
@@ -375,7 +375,7 @@ export default function Home(props: PropsHome) {
                     </div>
                     <div className="md:flex md:items-center">
                       <Input
-                        id="channelSearchInput"
+                        id="limitSearchInput"
                         type="number"
                         value={limitSearch}
                         label="Limit"
@@ -436,9 +436,9 @@ export default function Home(props: PropsHome) {
           <div className="mt-5">
             <button className="
                 transition-all
-                bg-green-600
-                hover:bg-green-700
-                disabled:bg-green-800
+                bg-green-700
+                hover:bg-green-800
+                disabled:bg-green-900
                 disabled:text-slate-200
                 disabled:cursor-not-allowed
                 text-white
@@ -457,9 +457,9 @@ export default function Home(props: PropsHome) {
             </button>
             <button className="
                 transition-all
-                bg-green-600
-                hover:bg-green-700
-                disabled:bg-green-800
+                bg-green-700
+                hover:bg-green-800
+                disabled:bg-green-900
                 disabled:text-slate-200
                 disabled:cursor-not-allowed
 
@@ -479,9 +479,9 @@ export default function Home(props: PropsHome) {
             </button>
             <button className="
                 transition-all
-                bg-green-600
-                hover:bg-green-700
-                disabled:bg-green-800
+                bg-green-700
+                hover:bg-green-800
+                disabled:bg-green-900
                 disabled:text-slate-200
                 disabled:cursor-not-allowed
 
@@ -526,12 +526,12 @@ export default function Home(props: PropsHome) {
           pauseOnHover
           theme="light"
         />
-        {/* <BtnSetting 
+        <BtnSetting 
           userId={userId} 
           userName={userName} 
           getUserName={getUserName}
           setUserName={setUserName}
-        /> */}
+        />
       </div>
     </>
   )
