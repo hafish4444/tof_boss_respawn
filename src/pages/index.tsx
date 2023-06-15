@@ -526,12 +526,12 @@ export default function Home(props: PropsHome) {
           pauseOnHover
           theme="light"
         />
-        <BtnSetting 
+        {/* <BtnSetting 
           userId={userId} 
           userName={userName} 
           getUserName={getUserName}
           setUserName={setUserName}
-        />
+        /> */}
       </div>
     </>
   )
