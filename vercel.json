@@ -7,10 +7,6 @@
       {
         "path": "/api/migrate/getBossList",
         "schedule": "0 21 * * *"
-      },
-      {
-        "path": "/api/migrate/getUserList",
-        "schedule": "0 22 * * *"
       }
     ]
   }
