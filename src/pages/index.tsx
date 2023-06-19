@@ -119,7 +119,8 @@ export default function Home(props: PropsHome) {
       boss.isCheck = true
       _bossTimeStampList[bossIndex] = boss
       if (isFind) {
-        navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
+        navigator.clipboard.writeText(`${boss.boss?.name} <LblRed>[CH${boss.channel}]</</>> [Free Chest]`);
+        // navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
       }
       await ApiBoss.checkedBoss(boss._id ?? "", boss.isCheck)
       if (isFind) {

@@ -39,6 +39,7 @@ export default function CardBoss(props: propsCardBoss) {
 
   const dataBossToClipboard = () => {
     navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] Auto Join`);
+    // navigator.clipboard.writeText(`${boss.boss?.name} <LblRed>[CH${boss.channel}]</</>> Auto Join`);
     notify()
   }
 
