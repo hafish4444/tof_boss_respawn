@@ -154,6 +154,12 @@ export default function Home(props: PropsHome) {
     window.localStorage.setItem('bossTimeStampList', JSON.stringify(bossTimeStampList))
   }
 
+  const setDataBossTimeStampWithLoad = async () => {
+    setLoadingAPI(true);
+    await setDataBossTimeStamp()
+    setLoadingAPI(false);
+  }
+
   const getUserId = async () => {
     if (typeof window !== "undefined") {
       const userId = window.localStorage.getItem('userId') ?? uuidv4()
@@ -182,11 +188,10 @@ export default function Home(props: PropsHome) {
     });
     
     if (typeof window !== "undefined") {
-      setLoadingAPI(true);
       getUserId()
       getUserName()
-      setDataBossTimeStamp()
-      setLoadingAPI(false);
+      setDataBossTimeStampWithLoad()
+      console.log("Loading in window")
     }
     const interval = setInterval(() => {
       setTime(new Date());
