@@ -14,6 +14,11 @@ const nextConfig = {
       return acc;
     }, {});
     config.plugins.push(new webpack.DefinePlugin(env));
+    // config.plugins.push(
+    //   new webpack.ProgressPlugin((percentage, message, ...args) => {
+    //     console.info(percentage, message, ...args);
+    //   })
+    // );
     return config;
   }
 }

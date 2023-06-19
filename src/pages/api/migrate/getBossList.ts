@@ -1,6 +1,9 @@
+import fs from 'fs';
+import path from 'path';
 import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../../lib/mongodb";
-import fs from 'fs';
+
+const dataFilePath = path.join(process.cwd(), 'data/bossList.json');
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
