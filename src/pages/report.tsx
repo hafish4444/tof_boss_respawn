@@ -1,15 +1,16 @@
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head'
+import dynamic from "next/dynamic";
+
 import Boss from "../../types/boss"
 import User from "../../types/user"
 import BossRespawn from "../../types/bossRespawn"
 
 import ApiBoss from "@/helpers/api/boss"
 import moment from 'moment'
-import Input from '../../components/input'
-import { useState, useEffect, useRef } from 'react';
-import Select from '../../components/select'
-import { OptionProps } from 'react-select'
 import Image from 'next/image'
+const Select = dynamic(import("../../components/select"))
+
 interface PropsReport {
   bossList: Boss[]
   userList: User[]

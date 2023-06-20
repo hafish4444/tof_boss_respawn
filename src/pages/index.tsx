@@ -7,7 +7,9 @@ import Head from 'next/head'
 import { useState, useEffect, lazy, Suspense, useRef } from 'react';
 import Image from "next/image"
 
-import Select from "../../components/select";
+const Input = dynamic(import("../../components/input"));
+const Select = dynamic(import("../../components/select"));
+const BtnSetting = dynamic(import("../../components/btnSetting"));
 const CardBoss = dynamic(import("../../components/cardBoss"))
 const InputStampBoss = lazy(() => import('../../components/inputStampBoss'));
 
@@ -19,8 +21,6 @@ import BossRespawn from "../../types/bossRespawn"
 import SearchParam from "../../types/searchParam";
 
 import ApiBoss from "@/helpers/api/boss"
-import Input from "../../components/input";
-import BtnSetting from "../../components/btnSetting";
 interface PropsHome {
   bossList: Boss[]
 }
