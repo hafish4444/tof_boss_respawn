@@ -7,10 +7,6 @@ interface InputProps {
   userList: []
 }
 
-export const config = {
-  runtime: 'edge',
-};
-
 export default async function handler(req: { body: InputProps }, res: NextApiResponse) {
   try {
     const { bossList, userList } = req.body
