@@ -9,7 +9,6 @@ require('dotenv').config();
 const nextConfig = {
   reactStrictMode: true,
   webpack: config => {
-    config.experiments = { ...config.experiments, topLevelAwait: true }
     const env = Object.keys(process.env).reduce((acc, curr) => {
       acc[`process.env.${curr}`] = JSON.stringify(process.env[curr]);
       return acc;
