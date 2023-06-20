@@ -28,7 +28,7 @@ export default async function handler(req: { body: InputProps }, res: NextApiRes
                 {
                   $lt: [
                     { $toDate: "$respawnTime" },
-                    { $toDate: moment().startOf('day').add(4, 'hour').subtract(1, 'days').toDate() }
+                    { $toDate: moment().startOf('day').add(4, 'hour').toDate() }
                   ]
                 },
                 bossIds.length 
