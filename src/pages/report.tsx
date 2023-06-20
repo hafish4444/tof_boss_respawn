@@ -32,8 +32,12 @@ interface SearchParamReport {
   userList: Array<string>
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(ctx: any) {
   try {
+    ctx.res.setHeader(
+      'Cache-Control',
+      'public, s-maxage=43200, stale-while-revalidate=59'
+    )
     const bosses = await ApiBoss.getBossList()
     const users = await ApiBoss.getUserList()
     return {

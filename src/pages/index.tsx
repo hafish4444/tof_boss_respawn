@@ -33,8 +33,12 @@ interface optionProps {
   value: string
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(ctx: any) {
   try {
+    ctx.res.setHeader(
+      'Cache-Control',
+      'public, s-maxage=3600, stale-while-revalidate=59'
+    )
     const bosses = await ApiBoss.getBossList()
     return {
       props: { bossList: JSON.parse(JSON.stringify(bosses)) }
