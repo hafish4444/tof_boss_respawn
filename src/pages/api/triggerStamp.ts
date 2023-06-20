@@ -1,7 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { pusher } from "../../../lib/pusher";
 
-// presence channel handler
+export const config = {
+  runtime: 'edge',
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { message} = req.query;
   // trigger a new post event via pusher

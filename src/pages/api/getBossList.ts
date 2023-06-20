@@ -1,6 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import fs from 'fs';
 
+export const config = {
+  runtime: 'edge',
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     let bosses :[] = []

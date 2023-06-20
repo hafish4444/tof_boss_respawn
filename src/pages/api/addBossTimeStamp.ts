@@ -10,6 +10,10 @@ interface BossRespawn {
     isCheck: boolean
 }
 
+export const config = {
+    runtime: 'edge',
+};
+
 export default async function handler(req: { body: BossRespawn }, res: NextApiResponse) {
     try {
         const client = await clientPromise;

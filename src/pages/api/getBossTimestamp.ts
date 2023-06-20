@@ -9,6 +9,10 @@ interface InputProps {
   limit: number;
 }
 
+export const config = {
+  runtime: 'edge',
+};
+
 export default async function handler(req: { body: InputProps }, res: NextApiResponse) {
   try {
     const { bossList, userId, channel, limit } = req.body
