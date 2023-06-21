@@ -21,6 +21,7 @@ import BossRespawn from "../../types/bossRespawn"
 import SearchParam from "../../types/searchParam";
 
 import ApiBoss from "@/helpers/api/boss"
+import Link from "next/link";
 interface PropsHome {
   bossList: Boss[]
 }
@@ -520,12 +521,15 @@ export default function Home(props: PropsHome) {
             <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
           </Suspense>
           <hr className="mt-3 mb-4" />
-          <button 
-            className="transition-all bg-[#6346AA] hover:bg-[#41297e] rounded-md shadow-lg dark:shadow-none  text-white p-3 mt-2" 
-            onClick={ () => { window.location.href = "/report"} }
+          <Link
+            href = "/report"
           >
-            Sumary Page 🠖
-          </button>
+            <button 
+              className="transition-all bg-[#6346AA] hover:bg-[#41297e] rounded-md shadow-lg dark:shadow-none  text-white p-3 mt-2" 
+            >
+              Sumary Page 🠖
+            </button>
+          </Link>
         </div>
         <ToastContainer
           position="bottom-left"
