@@ -67,6 +67,10 @@ const myAPI = {
             body: JSON.stringify(searchParam)
         });
         return await responseBossRespawn.json();
+    },
+    triggerStamp: async() => {
+        const responseBossRespawn = await fetch(`${apiUrl}/api/triggerStamp`, { method: "POST" });
+        return await responseBossRespawn.json();
     }
 }
 export default myAPI

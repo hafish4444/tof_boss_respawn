@@ -117,6 +117,10 @@ export default function Home(props: PropsHome) {
     return bossRespawn
   }
 
+  const triggerGetData = () => {
+    ApiBoss.triggerStamp()
+  }
+
   const handleCheckBoss = async (boss: BossRespawn, isFind: Boolean) => {
     let _bossTimeStampList = bossTimeStampList
     const bossIndex = _bossTimeStampList.findIndex((_boss: BossRespawn) => _boss._id === boss._id)
@@ -140,7 +144,7 @@ export default function Home(props: PropsHome) {
         let response: any = await ApiBoss.addBossTimeStamp(newBoss)
         newBoss._id = response.insertedId
       } else {
-        setDataBossTimeStamp()
+        triggerGetData()
       }
     }
   }
@@ -518,7 +522,7 @@ export default function Home(props: PropsHome) {
           <h1 className="text-white mb-3 text-3xl font-bold">Boss Timestamp</h1>
           <Suspense fallback={<div>Loading...</div>}>
             <InputStampBoss bossOptions={bossOptions} setDataBossTimeStamp={setDataBossTimeStamp} userId={userId} />
-            <p className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</p>
+            <div className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</div>
           </Suspense>
           <hr className="mt-3 mb-4" />
           <Link
