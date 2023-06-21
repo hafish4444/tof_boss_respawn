@@ -417,6 +417,7 @@ export default function Home(props: PropsHome) {
                       width={180}
                       height={40}
                       className="m-auto mb-3"
+                      priority
                     />
                     <div className="text-[#6B86CF] text-4xl font-extrabold mb-3">No Boss Result</div>
                     <div className="">Please Select Boss Timestamp</div>
@@ -429,6 +430,7 @@ export default function Home(props: PropsHome) {
                         width={180}
                         height={40}
                         className="m-auto mb-3"
+                        priority
                       />
                     <div className="text-[#6B86CF] text-4xl font-extrabold mb-3 inline-flex">
                       Loading... 
@@ -437,7 +439,8 @@ export default function Home(props: PropsHome) {
                           alt={`nya`}
                           width={50}
                           height={50}
-                          className="m-auto mb-3 animate-spin border rounded-full border-[#615f58]"
+                          className="m-auto ml-2 mb-3 animate-spin border border-[#615f58]"
+                          priority
                         />
                       </div>
                   </div>
