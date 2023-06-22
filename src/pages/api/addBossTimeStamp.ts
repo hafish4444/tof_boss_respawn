@@ -32,10 +32,11 @@ export default async function handler(req: { body: BossRespawn }, res: NextApiRe
         if (boss_respawn.rowCount > 0) {
             await pusher.trigger("tof-boss-respawn-realtime", "boss-stamp-update", "Update time");
             res.status(200).json({ msg: "Stamp Success", bossId: param.bossId });
+        } else {
+            res.status(400).json({ msg: "Error Stamp Bosss" });
         }
     } catch (e: any) {
         console.error(e)
         res.status(400).json({ msg: "Error Add bosses", err: e });
     }
-    res.status(400).json({ msg: "Error Stamp Bosss" });
 }

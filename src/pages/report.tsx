@@ -63,13 +63,13 @@ export default function Home(props: PropsReport) {
     for(const boss of bossList) {
       let amount = 0
       for(const bossRespawn of bossRespawnList) {
-        if (bossRespawn.bosses?.name === boss.name) {
+        if (bossRespawn.bosses?.name_th === boss.name_th) {
           amount += 1
         }
       }
       if (amount) {
         bossRespawnByBossList.push({
-          name: boss.name,
+          name: boss.name_th,
           amount: amount
         })
       }
@@ -102,7 +102,7 @@ export default function Home(props: PropsReport) {
         bossOptionIndex = bossOptions.length - 1
       }
       bossOptions[bossOptionIndex].options.push({
-        label: boss.name,
+        label: boss.name_th,
         value: boss._id ?? ""
       })
     }
@@ -304,7 +304,7 @@ export default function Home(props: PropsReport) {
                           [...bossRespawnDayList, ...bossRespawnAllList].slice(0, MAX_AMOUNT).map((data, index) => {
                             return (
                               <tr key={index}>
-                                <td className='px-3 py-2'>{data.bosses?.name}</td>
+                                <td className='px-3 py-2'>{data.bosses?.name_th}</td>
                                 <td className='px-3 py-2' align='center'>{data.channel}</td>
                                 <td className='px-3 py-2' align='center'>{moment(data.dieTime).format('DD/MM HH:mm:ss') }</td>
                                 <td className='px-3 py-2' align='center'>{ data.createdBy?.substring(data.createdBy.length - 12) ?? "-" }</td>

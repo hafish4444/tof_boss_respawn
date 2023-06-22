@@ -38,13 +38,13 @@ export default function CardBoss(props: propsCardBoss) {
   }
 
   const dataBossToClipboard = () => {
-    navigator.clipboard.writeText(`${boss.bosses?.name} [CH${boss.channel}] Auto Join`);
-    // navigator.clipboard.writeText(`${boss.bosses?.name} <LblRed>[CH${boss.channel}]</</>> Auto Join`);
+    navigator.clipboard.writeText(`${boss.bosses?.name_th} [CH${boss.channel}] Auto Join`);
+    // navigator.clipboard.writeText(`${boss.bosses?.name_th} <LblRed>[CH${boss.channel}]</</>> Auto Join`);
     notify()
   }
 
   const respawnBossToClipboard = () => {
-    navigator.clipboard.writeText(`${boss.bosses?.name} [CH${boss.channel}] ${textRespawn}`);
+    navigator.clipboard.writeText(`${boss.bosses?.name_th} [CH${boss.channel}] ${textRespawn}`);
     notify()
   }
 
@@ -61,7 +61,7 @@ export default function CardBoss(props: propsCardBoss) {
       <div className="relative h-[182px]">
         <Image
           src={boss.bosses?.imageUrl ?? ""}
-          alt={`Boss ${boss.bosses?.name} Image`}
+          alt={`Boss ${boss.bosses?.name_th} Image`}
           placeholder="blur"
           blurDataURL={rgbDataURL(55, 100, 160)}
           fill
@@ -73,7 +73,7 @@ export default function CardBoss(props: propsCardBoss) {
         />
       </div>
       <div className="px-4 my-2">
-        <div className="text-[22px] font-bold cursor-pointer" onClick={ dataBossToClipboard }>{boss.bosses?.name}</div>
+        <div className="text-[22px] font-bold cursor-pointer" onClick={ dataBossToClipboard }>{boss.bosses?.name_th}</div>
         <div className="text-[22px] font-bold">Ch. {boss.channel}</div>
       </div>
       <div className="px-4 pb-4">

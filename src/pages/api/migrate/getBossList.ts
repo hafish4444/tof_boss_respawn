@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .find()
       .toArray();
     // for(const boss of bosses) {
-    //   const data = await sql`INSERT INTO public.bosses(name_th, name_en, city, "imageUrl") VALUES (${boss.name}, '', ${boss.city}, ${boss.imageUrl});`;
+    //   const data = await sql`INSERT INTO public.bosses(name_th, name_en, city, "imageUrl") VALUES (${boss.name_th}, '', ${boss.city}, ${boss.imageUrl});`;
     //   console.log(data)
     // }
       
