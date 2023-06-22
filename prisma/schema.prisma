@@ -1,0 +1,43 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["jsonProtocol"]
+}
+
+datasource db {
+    provider          = "postgresql"
+    url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
+    directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+    shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
+}
+
+model boss_time_stamp {
+  id                                     String   @id(map: "boss_time_stamp_id") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  bossId                                 String?  @db.Uuid
+  channel                                Int?
+  dieTime                                DateTime @db.Timestamptz(6)
+  respawnTime                            DateTime @db.Timestamptz(6)
+  isCheck                                Boolean
+  isDelete                               Boolean?
+  createdBy                              String?  @db.Uuid
+  updatedBy                              String?  @db.Uuid
+  bosses                                 bosses?  @relation(fields: [bossId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "boss_time_stamp_bosses_fk")
+  users_boss_time_stamp_createdByTousers users?   @relation("boss_time_stamp_createdByTousers", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "created_user")
+  users_boss_time_stamp_updatedByTousers users?   @relation("boss_time_stamp_updatedByTousers", fields: [updatedBy], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "updated_user")
+}
+
+model bosses {
+  id              String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name_th         String?
+  name_en         String?
+  city            String?
+  imageUrl        String?
+  ord             Int?              @default(0)
+  boss_time_stamp boss_time_stamp[]
+}
+
+model users {
+  id                                               String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  username                                         String?
+  boss_time_stamp_boss_time_stamp_createdByTousers boss_time_stamp[] @relation("boss_time_stamp_createdByTousers")
+  boss_time_stamp_boss_time_stamp_updatedByTousers boss_time_stamp[] @relation("boss_time_stamp_updatedByTousers")
+}

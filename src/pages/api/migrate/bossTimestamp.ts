@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import moment from "moment";
 import clientPromise from "../../../../lib/mongodb";
 import fs from 'fs';
+import { sql } from '@vercel/postgres';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -31,6 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .toArray();
     if (bossTimeStamp.length) {
       await db.collection("boss_time_stamp_temp").insertMany(bossTimeStamp);
+
       const documentIds = bossTimeStamp.map(doc => doc._id);
       await db.collection("boss_time_stamp").deleteMany({ _id: { $in: documentIds } });
 

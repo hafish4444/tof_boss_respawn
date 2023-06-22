@@ -99,7 +99,7 @@ export default function Home(props: PropsHome) {
       }
       bossOptions[bossOptionIndex].options.push({
         label: boss.name,
-        value: boss._id ?? ""
+        value: boss.id ?? ""
       })
     }
     return bossOptions
