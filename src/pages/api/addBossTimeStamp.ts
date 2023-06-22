@@ -31,7 +31,7 @@ export default async function handler(req: { body: BossRespawn }, res: NextApiRe
 
         if (boss_respawn.rowCount > 0) {
             await pusher.trigger("tof-boss-respawn-realtime", "boss-stamp-update", "Update time");
-            res.json({ msg: "Stamp Success", bossId: param.bossId });
+            res.status(200).json({ msg: "Stamp Success", bossId: param.bossId });
         }
     } catch (e: any) {
         console.error(e)
