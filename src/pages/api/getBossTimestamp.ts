@@ -1,50 +1,48 @@
 import moment from "moment";
 import { NextApiResponse } from "next";
-import { db } from "@vercel/postgres";
+import prisma from '../../../lib/prisma';
 interface InputProps {
   bossList: [];
-  userId: string;
-  channel: number;
+  userId: string | undefined;
+  channel: number | undefined;
   limit: number;
   }
 
-  // export const config = {
-  //   runtime: 'edge',
-  // };
-
 export default async function handler(req: { body: InputProps }, res: NextApiResponse) {
   try {
-    const client = await db.connect();
     let { bossList, userId, channel, limit } = req.body
-    const bossIds = bossList.join()
 
-    let _userId: string = ''
-    let _channel: string = ''
+    const bossIds = bossList.length ? bossList : undefined
 
-    if (!userId) {
-      _userId = "null"
-    }
-    if (!channel) {
-      _channel = "null"
-    }
-    console.log('_userId', _userId)
-    console.log('_channel', _channel)
+    userId = userId || undefined;
+    channel = channel || undefined;
 
-    const bossTimeStamp = await client.sql`
-      SELECT id, "bossId", channel, "dieTime", "respawnTime", "isCheck", "isDelete", "createdBy", "updatedBy" 
-      FROM boss_time_stamp
-      WHERE "isCheck" = false
-        AND ("createdBy" = ${_userId} OR null is ${_userId})
-        AND ("channel" = ${_channel} OR null is ${_channel})
-        AND "respawnTime" > '${moment().subtract(15, 'minutes').toISOString()}'
-      ORDER BY "dieTime"
-      LIMIT ${limit && limit > 0 ? limit : 40};
-    `;
-    // AND bossId in (${bossIds})
+    const bossTimeStamp = await prisma.boss_time_stamp.findMany({
+      where: {
+        isCheck: false,
+        createdBy: userId,
+        channel: channel,
+        respawnTime: {
+          gt: moment().subtract(15, 'minutes').toISOString(),
+        },
+        bosses: {
+          id: {
+            in: bossIds,
+          },
+        }
+      },
+      orderBy: {
+        dieTime: 'asc',
+      },
+      take: limit && limit > 0 ? limit : 40,
+      include: {
+        bosses: true,
+      }
+    });
     
-    res.status(200).json(bossTimeStamp.rows);
+    res.status(200).json(bossTimeStamp);
   } catch (e) {
-    console.error(e);
+    console.log(e)
     res.status(400).json({ msg: "Error retrieving boss_time_stamp", err: e });
   }
 }

@@ -6,6 +6,6 @@ export default interface BossRespawn {
   dieTime: Date
   respawnTime: Date
   isCheck: boolean
-  boss?: Boss
+  bosses?: Boss
   createdBy: string
 }

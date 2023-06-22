@@ -128,8 +128,8 @@ export default function Home(props: PropsHome) {
       boss.isCheck = true
       _bossTimeStampList[bossIndex] = boss
       if (isFind) {
-        navigator.clipboard.writeText(`${boss.boss?.name} <LblRed>[CH${boss.channel}]</</>> [Free Chest]`);
-        // navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
+        navigator.clipboard.writeText(`${boss.bosses?.name} <LblRed>[CH${boss.channel}]</</>> [Free Chest]`);
+        // navigator.clipboard.writeText(`${boss.bosses?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
       }
       await ApiBoss.checkedBoss(boss._id ?? "", boss.isCheck)
       if (isFind) {
@@ -249,14 +249,14 @@ export default function Home(props: PropsHome) {
 
   const respawnAllBossWithTimeToClipboard = () => {
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
-      return `${boss.boss?.name} [CH${boss.channel}] ${moment(boss.respawnTime).format("HH:mm:ss")}`
+      return `${boss.bosses?.name} [CH${boss.channel}] ${moment(boss.respawnTime).format("HH:mm:ss")}`
     }).join(" → ")
     navigator.clipboard.writeText(`${sortBoss}`);
     notify()
   }
   const respawnAllBossToClipboard = () => {
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
-      return `${boss.boss?.name} CH${boss.channel}`
+      return `${boss.bosses?.name} CH${boss.channel}`
     }).join(" → ")
     navigator.clipboard.writeText(`${sortBoss}`);
     notify()
@@ -269,7 +269,7 @@ export default function Home(props: PropsHome) {
     for (const boss of displayBossTimeStampList) {
       const isMulti = index + 1 === displayBossTimeStampList.length || displayBossTimeStampList[index + 1].bossId !== boss.bossId
       if (boss.bossId !== beforeBossId) {
-        txtBoss += `${boss.boss?.name}(`
+        txtBoss += `${boss.bosses?.name}(`
       }
       txtBoss += `${boss.channel} ${moment(boss.respawnTime).format("HH:mm")}`
       if (isMulti) {
