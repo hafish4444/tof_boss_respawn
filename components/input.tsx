@@ -21,8 +21,7 @@ const Input: React.FC<InputProps> = ({ id, onChange, value, label, type, disable
         type={type}
         id={id}
         className={`
-          pt-[16px] 
-          pb-[3px] 
+          ${label ? "pt-[16px] pb-[3px]" : "py-[8px]"} 
           px-3
           text-white
           bg-[#6346AA]

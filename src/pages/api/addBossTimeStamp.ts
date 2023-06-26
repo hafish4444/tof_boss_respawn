@@ -1,23 +1,36 @@
 import { ObjectId } from "mongodb"
 import { pusher } from "../../../lib/pusher";
 import clientPromise from '../../../lib/mongodb'
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 interface BossRespawn {
-    bossId: ObjectId,
-    channel: number,
-    dieTime: Date,
-    respawnTime: Date,
+    bossId: ObjectId
+    channel: number
+    dieTime: Date
+    respawnTime: Date
     isCheck: boolean
+    createdBy: string
 }
 
 // export const config = {
 //     runtime: 'edge',
 // };
 
-export default async function handler(req: { body: BossRespawn }, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         const client = await clientPromise;
         const db = client.db("tof_boss_stamp");
+        const user = await db.collection("users").findOneAndUpdate(
+            { userId: req.body.createdBy },
+            {
+                $setOnInsert: { 
+                    userId: req.body.createdBy,
+                    userName: ""
+                },
+            },
+            {
+              upsert: true,
+            }
+        );
         const boss_respawn = await db.collection("boss_time_stamp").insertOne({
             ...req.body,
             bossId: new ObjectId(req.body.bossId)

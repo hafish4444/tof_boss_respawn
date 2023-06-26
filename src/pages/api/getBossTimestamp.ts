@@ -66,6 +66,17 @@ export default async function handler(req: { body: InputProps }, res: NextApiRes
         },
         {
           $unwind: '$boss'
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "createdBy",
+            foreignField: "userId",
+            as: "user"
+          }
+        },
+        {
+          $unwind: '$user'
         }
       ])
       .toArray();

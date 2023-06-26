@@ -307,7 +307,7 @@ export default function Home(props: PropsReport) {
                                 <td className='px-3 py-2'>{data.boss?.name}</td>
                                 <td className='px-3 py-2' align='center'>{data.channel}</td>
                                 <td className='px-3 py-2' align='center'>{moment(data.dieTime).format('DD/MM HH:mm:ss') }</td>
-                                <td className='px-3 py-2' align='center'>{ data.createdBy?.substring(data.createdBy.length - 12) ?? "-" }</td>
+                                <td className='px-3 py-2' align='center'>{ data.user?.userName ? data.user.userName : data.createdBy?.substring(data.createdBy.length - 12) ?? "-" }</td>
                               </tr>
                             )
                           })

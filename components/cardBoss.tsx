@@ -38,7 +38,14 @@ export default function CardBoss(props: propsCardBoss) {
   }
 
   const dataBossToClipboard = () => {
-    navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] Auto Join`);
+    let textclipboard = getTextclipboard()
+    if (textclipboard) {
+      const _textclipboard: any = JSON.parse(textclipboard)
+      console.log(_textclipboard)
+      navigator.clipboard.writeText(`${boss.boss?.name} ${_textclipboard.textCall1 ?? ""}CH${boss.channel}${_textclipboard.textCall2 ?? ""}`);
+    } else {
+      navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] Auto Join`);
+    }
     // navigator.clipboard.writeText(`${boss.boss?.name} <LblRed>[CH${boss.channel}]</</>> Auto Join`);
     notify()
   }
@@ -46,6 +53,12 @@ export default function CardBoss(props: propsCardBoss) {
   const respawnBossToClipboard = () => {
     navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] ${textRespawn}`);
     notify()
+  }
+
+  const getTextclipboard = () => {
+    if (typeof window !== "undefined") {
+      return window.localStorage.getItem('textclipboard')
+    }
   }
 
   useEffect(() => {
@@ -89,11 +102,11 @@ export default function CardBoss(props: propsCardBoss) {
               <div  className="relative">
                 <button className="rounded-full bg-green-600 p-2 text-center w-[34px] h-[34px] mr-1 text-[12px]" onClick={() => handleCheckBoss(boss, true)}>✓</button>
                 <button className="rounded-full bg-red-600 p-2 text-center w-[34px] h-[34px] text-[12px]" onClick={() => handleCheckBoss(boss, false)}>✗</button>
-                <div className="absolute text-[10px] right-0 whitespace-nowrap">
-                  By { boss.createdBy.substring(boss.createdBy.length - 12) }
+                <div className="absolute text-[10px] right-0 whitespace-nowrap truncate max-w-[200px]">
+                  By { boss.user?.userName ? boss.user.userName : boss.createdBy.substring(boss.createdBy.length - 12) }
                 </div>
               </div>
-            : <div>By { boss.createdBy.substring(boss.createdBy.length - 12) }</div>
+            : <div className="truncate ms-1 max-w-full">By { boss.user?.userName ? boss.user.userName : boss.createdBy.substring(boss.createdBy.length - 12) }</div>
           }
         </div>
       </div>

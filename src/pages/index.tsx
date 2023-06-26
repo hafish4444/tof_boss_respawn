@@ -117,6 +117,13 @@ export default function Home(props: PropsHome) {
     return bossRespawn
   }
 
+  const getIsAutoClipboard = () => {
+    if (typeof window !== "undefined") {
+      const isAutoClipboard = window.localStorage.getItem('isAutoClipboard') ?? "false"
+      return JSON.parse(isAutoClipboard)
+    }
+  }
+  
   const triggerGetData = () => {
     ApiBoss.triggerStamp()
   }
@@ -128,8 +135,10 @@ export default function Home(props: PropsHome) {
       boss.isCheck = true
       _bossTimeStampList[bossIndex] = boss
       if (isFind) {
-        navigator.clipboard.writeText(`${boss.boss?.name} <LblRed>[CH${boss.channel}]</</>> [Free Chest]`);
-        // navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
+        if (!getIsAutoClipboard()) {
+          navigator.clipboard.writeText(`${boss.boss?.name} <LblRed>[CH${boss.channel}]</</>> [Free Chest]`);
+          // navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
+        }
       }
       await ApiBoss.checkedBoss(boss._id ?? "", boss.isCheck)
       if (isFind) {
@@ -547,12 +556,12 @@ export default function Home(props: PropsHome) {
           pauseOnHover
           theme="light"
         />
-        {/* <BtnSetting 
+        <BtnSetting 
           userId={userId} 
           userName={userName} 
           getUserName={getUserName}
           setUserName={setUserName}
-        /> */}
+        />
       </div>
     </>
   )
