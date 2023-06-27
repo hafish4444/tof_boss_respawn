@@ -22,6 +22,7 @@ import SearchParam from "../../types/searchParam";
 
 import ApiBoss from "@/helpers/api/boss"
 import Link from "next/link";
+import NowDate from "../../components/nowDate";
 interface PropsHome {
   bossList: Boss[]
 }
@@ -59,7 +60,6 @@ export default function Home(props: PropsHome) {
 
   const _bossTimeStampList: Array<BossRespawn> = []
 
-  const [time, setTime] = useState(new Date());
   const [userId, setUserId] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
   const [bossTimeStampList, setBossTimeStampList] = useState<Array<BossRespawn>>(_bossTimeStampList);
@@ -212,14 +212,9 @@ export default function Home(props: PropsHome) {
       setDataBossTimeStampWithLoad()
       console.log("Loading in window")
     }
-    const interval = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
     const channel = pusher.subscribe("tof-boss-respawn-realtime");
     setPusherChannel(channel)
-
     return () => {
-      clearInterval(interval);
       pusher.unsubscribe("tof-boss-respawn-realtime");
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -531,7 +526,7 @@ export default function Home(props: PropsHome) {
           <h1 className="text-white mb-3 text-3xl font-bold">Boss Timestamp</h1>
           <Suspense fallback={<div>Loading...</div>}>
             <InputStampBoss bossOptions={bossOptions} setDataBossTimeStamp={setDataBossTimeStamp} userId={userId} />
-            <div className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</div>
+            <NowDate />
           </Suspense>
           <hr className="mt-3 mb-4" />
           <Link
