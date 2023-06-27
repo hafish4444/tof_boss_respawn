@@ -21,6 +21,7 @@ const rgbDataURL = (r: number, g: number, b: number) => `data:image/gif;base64,R
 export default function CardBoss(props: propsCardBoss) {
   const { boss, disabledCheckBoss, handleCheckBoss, notify } = props
   const [time, setTime] = useState(new Date());
+  const [src, setSrc] = useState(boss.boss?.imageUrl ?? "");
 
   let textRespawn = ""
   const respawnTimeDiff = moment(time).diff(boss.respawnTime, 'second')
@@ -73,7 +74,7 @@ export default function CardBoss(props: propsCardBoss) {
     <div className="bg-[#212134] text-white rounded border border-[#242442] shadow-lg dark:shadow-none">
       <div className="relative h-[182px]">
         <Image
-          src={boss.boss?.imageUrl ?? ""}
+          src={src}
           alt={`Boss ${boss.boss?.name} Image`}
           placeholder="blur"
           blurDataURL={rgbDataURL(55, 100, 160)}
@@ -83,6 +84,7 @@ export default function CardBoss(props: propsCardBoss) {
                  (max-width: 1280px) 33vw,
                  (max-width: 1536px) 25vw,
                  20vw"
+          onError={() => setSrc('/default.png')}
         />
       </div>
       <div className="px-4 my-2">
