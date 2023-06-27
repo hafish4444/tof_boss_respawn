@@ -2,10 +2,15 @@ import moment from "moment"
 import { useState, useEffect } from 'react';
 import Image from "next/image"
 import BossRespawn from "../types/bossRespawn"
+import Boss from "../types/boss";
 interface propsCardBoss {
   boss: BossRespawn
   disabledCheckBoss?: boolean
   handleCheckBoss: (boss: BossRespawn, isFind: Boolean) => void
+  notify: () => void
+}
+interface propsRespawnTime {
+  boss: BossRespawn
   notify: () => void
 }
 
@@ -18,13 +23,23 @@ keyStr.charAt(((e2 & 15) << 2) | (e3 >> 6)) +
 keyStr.charAt(e3 & 63)
 const rgbDataURL = (r: number, g: number, b: number) => `data:image/gif;base64,R0lGODlhAQABAPAA${triplet(0, r, g) + triplet(b, 255, 255)}/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`
 
-export default function CardBoss(props: propsCardBoss) {
-  const { boss, disabledCheckBoss, handleCheckBoss, notify } = props
+const RespawnTime = (props: propsRespawnTime) => {
+  const { boss, notify } = props
   const [time, setTime] = useState(new Date());
-  const [src, setSrc] = useState(boss.boss?.imageUrl ?? "");
+  const _boss = boss ?? {
+    _id: "",
+    bossId: "",
+    channel: "",
+    dieTime: "",
+    respawnTime: "",
+    isCheck: "",
+    boss: "",
+    user: "",
+    createdBy: ""
+  }
 
   let textRespawn = ""
-  const respawnTimeDiff = moment(time).diff(boss.respawnTime, 'second')
+  const respawnTimeDiff = moment(time).diff(_boss.respawnTime, 'second')
   const respawnTimeSecond = respawnTimeDiff * -1
   const respawnTimeMinute = Math.floor(respawnTimeDiff / 60) * -1
   
@@ -37,6 +52,31 @@ export default function CardBoss(props: propsCardBoss) {
       textRespawn = `Respawn in ${respawnTimeMinute} minute`
     }
   }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const respawnBossToClipboard = () => {
+    navigator.clipboard.writeText(`${_boss.boss?.name} [CH${_boss.channel}] ${textRespawn}`);
+    notify()
+  }
+  
+
+  return (
+    <div className="text-[18px] cursor-pointer" onClick={ respawnBossToClipboard }>
+      { textRespawn }
+    </div>
+  )
+}
+
+export default function CardBoss(props: propsCardBoss) {
+  const { boss, disabledCheckBoss, handleCheckBoss, notify } = props
+  const [src, setSrc] = useState(boss.boss?.imageUrl ?? "");
 
   const dataBossToClipboard = () => {
     let textclipboard = getTextclipboard()
@@ -51,24 +91,11 @@ export default function CardBoss(props: propsCardBoss) {
     notify()
   }
 
-  const respawnBossToClipboard = () => {
-    navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] ${textRespawn}`);
-    notify()
-  }
-
   const getTextclipboard = () => {
     if (typeof window !== "undefined") {
       return window.localStorage.getItem('textclipboard')
     }
   }
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="bg-[#212134] text-white rounded border border-[#242442] shadow-lg dark:shadow-none">
@@ -92,9 +119,7 @@ export default function CardBoss(props: propsCardBoss) {
         <div className="text-[22px] font-bold">Ch. {boss.channel}</div>
       </div>
       <div className="px-4 pb-4">
-        <div className="text-[18px] cursor-pointer" onClick={ respawnBossToClipboard }>
-          { textRespawn }
-        </div>
+        <RespawnTime boss={boss} notify={notify}></RespawnTime>
         <div className="flex justify-between items-center">
           <div className="text-[20px]">
             {moment(boss.respawnTime).format("hh:mm:ss")}
