@@ -13,7 +13,7 @@ export default function NowDate() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div>
-        <div className="text-white" suppressHydrationWarning>Now: {moment(time).format("hh:mm:ss")}</div>
+        <div className="text-white">Now: {moment(time).format("hh:mm:ss")}</div>
     </div>
   )
 }

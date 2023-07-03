@@ -10,7 +10,7 @@ import Image from "next/image"
 const Input = dynamic(import("../../components/input"));
 const Select = dynamic(import("../../components/select"));
 const BtnSetting = dynamic(import("../../components/btnSetting"));
-const CardBoss = dynamic(import("../../components/cardBoss"))
+const CardBosses = dynamic(import("../../components/cardBosses/cardBosses"))
 const InputStampBoss = lazy(() => import('../../components/inputStampBoss'));
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -55,7 +55,6 @@ export async function getServerSideProps(ctx: any) {
 }
 
 export default function Home(props: PropsHome) {
-  const TIME_CAN_EDIT = 59;
   const { bossList } = props
 
   const _bossTimeStampList: Array<BossRespawn> = []
@@ -126,36 +125,6 @@ export default function Home(props: PropsHome) {
   
   const triggerGetData = () => {
     ApiBoss.triggerStamp()
-  }
-
-  const handleCheckBoss = async (boss: BossRespawn, isFind: Boolean) => {
-    let _bossTimeStampList = bossTimeStampList
-    const bossIndex = _bossTimeStampList.findIndex((_boss: BossRespawn) => _boss._id === boss._id)
-    if (bossIndex !== -1) {
-      boss.isCheck = true
-      _bossTimeStampList[bossIndex] = boss
-      if (isFind) {
-        if (!getIsAutoClipboard()) {
-          navigator.clipboard.writeText(`${boss.boss?.name} <LblRed>[CH${boss.channel}]</</>> [Free Chest]`);
-          // navigator.clipboard.writeText(`${boss.boss?.name} [CH${boss.channel}] [Free Chest] until ${moment().add(2, 'minutes').format('HH:mm:ss')} | Auto Join`);
-        }
-      }
-      await ApiBoss.checkedBoss(boss._id ?? "", boss.isCheck)
-      if (isFind) {
-        const newBoss: BossRespawn = {
-          bossId: boss.bossId ?? "",
-          channel: boss.channel,
-          dieTime: new Date(),
-          respawnTime: new Date(moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')),
-          isCheck: false,
-          createdBy: userId
-        }
-        let response: any = await ApiBoss.addBossTimeStamp(newBoss)
-        newBoss._id = response.insertedId
-      } else {
-        triggerGetData()
-      }
-    }
   }
   const handleChangeBossSearch = async (data: any) => {
     setBossSearch(data);
@@ -406,55 +375,12 @@ export default function Home(props: PropsHome) {
               </div>
             </div>
           </div>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-3 min-h-[344px]">
-            {
-              !loadingAPI ?
-                displayBossTimeStampList.length > 0 ?
-                  displayBossTimeStampList.map((boss, index) => (
-                    <CardBoss 
-                      key={index}
-                      boss={boss}
-                      handleCheckBoss={handleCheckBoss}
-                      notify={notify}
-                      disabledCheckBoss={boss.createdBy !== userId && moment().diff(boss.dieTime, 'minutes') < TIME_CAN_EDIT}
-                    />
-                  ))
-                  : <div className="self-center text-white text-xl col-span-12 text-center">
-                    <Image
-                      src={"/nya.png"}
-                      alt={`nya`}
-                      width={180}
-                      height={40}
-                      className="m-auto mb-3"
-                      priority
-                    />
-                    <div className="text-[#6B86CF] text-4xl font-extrabold mb-3">No Boss Result</div>
-                    <div className="">Please Select Boss Timestamp</div>
-                    <div>From Below Section</div>
-                  </div>
-                : <div className="self-center text-white text-xl col-span-12 text-center">
-                    <Image
-                        src={"/nya.png"}
-                        alt={`nya`}
-                        width={180}
-                        height={40}
-                        className="m-auto mb-3"
-                        priority
-                      />
-                    <div className="text-[#6B86CF] text-4xl font-extrabold mb-3 inline-flex">
-                      Loading... 
-                      <Image
-                          src={"/nya.png"}
-                          alt={`nya`}
-                          width={50}
-                          height={50}
-                          className="m-auto ml-2 mb-3 animate-spin border border-[#615f58]"
-                          priority
-                        />
-                      </div>
-                  </div>
-            }
-          </div>
+          <CardBosses
+            userId={userId}
+            bossTimeStampList={bossTimeStampList}
+            loadingAPI={loadingAPI}
+            notify={notify}
+          />
           <div className="mt-5">
             <button className="
                 transition-all
@@ -526,7 +452,7 @@ export default function Home(props: PropsHome) {
           <h1 className="text-white mb-3 text-3xl font-bold">Boss Timestamp</h1>
           <Suspense fallback={<div>Loading...</div>}>
             <InputStampBoss bossOptions={bossOptions} setDataBossTimeStamp={setDataBossTimeStamp} userId={userId} />
-            <NowDate />
+            {/* <NowDate /> */}
           </Suspense>
           <hr className="mt-3 mb-4" />
           <Link
@@ -552,8 +478,8 @@ export default function Home(props: PropsHome) {
           theme="light"
         />
         <BtnSetting 
-          userId={userId} 
-          userName={userName} 
+          userId={userId}
+          userName={userName}
           getUserName={getUserName}
           setUserName={setUserName}
         />

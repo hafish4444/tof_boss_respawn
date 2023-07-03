@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head'
 import Image from "next/image"
 import ApiBoss from "@/helpers/api/boss"
-const CardBoss = dynamic(import("../../components/cardBoss"))
+const CardBoss = dynamic(import("../../components/cardBosses/cardBoss/cardBoss"))
 
 import BossRespawn from "../../types/bossRespawn"
 interface PropsPreview {
