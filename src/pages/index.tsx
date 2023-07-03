@@ -69,6 +69,7 @@ export default function Home(props: PropsHome) {
   const [loadingAPI, setLoadingAPI] = useState<boolean>(true);
   const [channelSearch, setChannelSearch] = useState<number | "">("");
   const [limitSearch, setLimitSearch] = useState<number>(40);
+  const [displayTimeoutSearch, setDisplayTimeoutSearch] = useState<number>(15);
   const [isExpandAdvanceSearch, setIsExpandAdvanceSearch] = useState<boolean>(false);
   const advSearchRef = useRef<HTMLInputElement>(null);
   const advSearchBtnRef = useRef<HTMLButtonElement>(null);
@@ -81,6 +82,10 @@ export default function Home(props: PropsHome) {
   const handleChangeLimitSearch = (e: any) => {
     const value = e.target.value
     setLimitSearch(parseInt(value));
+  }
+  const handleChangeDisplayTimeoutSearch = (e: any) => {
+    const value = e.target.value
+    setDisplayTimeoutSearch(parseInt(value));
   }
 
   const getOptionBoss = () => {
@@ -106,26 +111,19 @@ export default function Home(props: PropsHome) {
   const bossOptions: optionParentProps[] = getOptionBoss()
 
   const getBossTimeStampList = async () => {
+    console.log('displayTimeoutSearch', displayTimeoutSearch)
+    console.log('limit', limitSearch)
     const searchParam: SearchParam = {
       bossList: bossSearch.map(boss => boss.value),
       userId: isOnlyMyStamp ? userId : "",
       channel: channelSearch,
+      displayTimeout: displayTimeoutSearch,
       limit: limitSearch
     }
     const bossRespawn = await ApiBoss.getBossTimestamp(searchParam)
     return bossRespawn
   }
-
-  const getIsAutoClipboard = () => {
-    if (typeof window !== "undefined") {
-      const isAutoClipboard = window.localStorage.getItem('isAutoClipboard') ?? "false"
-      return JSON.parse(isAutoClipboard)
-    }
-  }
   
-  const triggerGetData = () => {
-    ApiBoss.triggerStamp()
-  }
   const handleChangeBossSearch = async (data: any) => {
     setBossSearch(data);
   };
@@ -168,7 +166,7 @@ export default function Home(props: PropsHome) {
       setDataBossTimeStamp()
     }
     isMountRef.current = true;
-  }, [bossSearch, isOnlyMyStamp, channelSearch, limitSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [bossSearch, isOnlyMyStamp, channelSearch, displayTimeoutSearch, limitSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const pusher = new Pusher(process.env.NEXT_PUBLIC_KEY as string, {
@@ -195,7 +193,7 @@ export default function Home(props: PropsHome) {
         setDataBossTimeStamp()
       });
     }
-  }, [pusherChannel, bossSearch, isOnlyMyStamp]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pusherChannel, bossSearch, isOnlyMyStamp, channelSearch, displayTimeoutSearch, limitSearch, isOnlyMyStamp]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     window.onclick = (event: MouseEvent) => {
@@ -218,7 +216,7 @@ export default function Home(props: PropsHome) {
     };
   }, [isExpandAdvanceSearch]);
 
-  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 15 && !boss.isCheck)
+  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment().diff(boss.respawnTime, 'minutes') < 20 && !boss.isCheck)
 
   const respawnAllBossWithTimeToClipboard = () => {
     const sortBoss = displayBossTimeStampList.map((boss: BossRespawn) => {
@@ -341,7 +339,8 @@ export default function Home(props: PropsHome) {
                   className={
                     `
                       absolute
-                      bottom-[-102px]
+                      rounded
+                      bottom-[-163px]
                       right-0
                       text-black
                       bg-white
@@ -351,7 +350,7 @@ export default function Home(props: PropsHome) {
                     `
                   }
                 >
-                  <div className="p-1">
+                  <div className="p-2">
                     <div className="md:flex md:items-center mb-2">
                       <Input
                         id="channelSearchInput"
@@ -359,6 +358,15 @@ export default function Home(props: PropsHome) {
                         value={channelSearch}
                         label="Channel"
                         onChange={handleChangeChannelSearch}
+                      />
+                    </div>
+                    <div className="md:flex md:items-center mb-2">
+                      <Input
+                        id="timeDisplay"
+                        type="number"
+                        value={displayTimeoutSearch}
+                        label="Data Timeout (minute)"
+                        onChange={handleChangeDisplayTimeoutSearch}
                       />
                     </div>
                     <div className="md:flex md:items-center">
@@ -378,6 +386,7 @@ export default function Home(props: PropsHome) {
           <CardBosses
             userId={userId}
             bossTimeStampList={bossTimeStampList}
+            displayTimeoutSearch={displayTimeoutSearch}
             loadingAPI={loadingAPI}
             notify={notify}
           />

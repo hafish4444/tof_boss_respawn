@@ -19,6 +19,7 @@ export async function getServerSideProps() {
       bossList: [],
       userId: "",
       channel: "",
+      displayTimeout: 20,
       limit: 40
     })
     return {
@@ -42,6 +43,7 @@ export default function Home(props: PropsPreview) {
       bossList: [],
       userId: "",
       channel: "",
+      displayTimeout: 20,
       limit: 40
     })
     return bossRespawn
@@ -90,7 +92,7 @@ export default function Home(props: PropsPreview) {
             { 
               displayBossTimeStampList.length > 0 ? 
                 displayBossTimeStampList.map((boss, index) => (
-                  <CardBoss disabledCheckBoss={true} key={index} boss={boss} handleCheckBoss={() => ""} notify={() => ""}/>
+                  <CardBoss disabledCheckBoss={true} key={index} boss={boss} handleCheckBoss={() => ""} notify={() => ""} time={time} />
                 ))
               : <div className="self-center text-white text-xl col-span-12 text-center">
                   <Image

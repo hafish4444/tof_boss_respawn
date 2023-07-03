@@ -9,6 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const movies = await db
       .collection("users")
       .find()
+      .project({ _id: 0, userId: 1, userName: 1 })
       .toArray();
     res.status(200).json(movies);
   } catch (e) {

@@ -12,12 +12,13 @@ interface PropsCardBosses {
   bossTimeStampList: BossRespawn[]
   loadingAPI: Boolean
   userId: string
+  displayTimeoutSearch: number
   notify: () => void
 }
 
 export default function CardBosses(props: PropsCardBosses) {
   const TIME_CAN_EDIT = 59;
-  const { bossTimeStampList, loadingAPI, userId, notify } = props
+  const { bossTimeStampList, loadingAPI, userId, displayTimeoutSearch, notify } = props
   const [time, setTime] = useState(new Date());
 
   const getIsAutoClipboard = () => {
@@ -70,7 +71,7 @@ export default function CardBosses(props: PropsCardBosses) {
       }
     }
   }
-  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment(time).diff(boss.respawnTime, 'minutes') < 15 && !boss.isCheck)
+  const displayBossTimeStampList = bossTimeStampList.filter(boss => moment(time).diff(boss.respawnTime, 'minutes') < displayTimeoutSearch && !boss.isCheck)
 
   useEffect(() => {
     const interval = setInterval(() => {

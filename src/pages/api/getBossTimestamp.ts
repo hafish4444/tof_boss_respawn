@@ -6,6 +6,7 @@ interface InputProps {
   bossList: [];
   userId: string;
   channel: number;
+  displayTimeout: number;
   limit: number;
 }
 
@@ -15,7 +16,7 @@ interface InputProps {
 
 export default async function handler(req: { body: InputProps }, res: NextApiResponse) {
   try {
-    const { bossList, userId, channel, limit } = req.body
+    const { bossList, userId, channel, displayTimeout, limit } = req.body
     const bossIds = bossList?.map((id: string) => new ObjectId(id)) ?? []; // convert strings to ObjectIds
     const client = await clientPromise;
     const db = client.db("tof_boss_stamp");
@@ -33,7 +34,7 @@ export default async function handler(req: { body: InputProps }, res: NextApiRes
                 {
                   $gte: [
                     { $toDate: "$respawnTime" },
-                    { $toDate: moment().subtract(15, 'minutes').toDate() }
+                    { $toDate: moment().subtract(displayTimeout, 'minutes').toDate() }
                   ]
                 },
                 bossIds.length 
