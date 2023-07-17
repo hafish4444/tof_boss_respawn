@@ -255,6 +255,28 @@ export default function Home(props: PropsHome) {
     notify()
   }
 
+  const respawnAllBossWithChannel = () => {
+    let beforeBossId = ""
+    let txtBoss = ""
+    let index = 0
+    for (const boss of displayBossTimeStampList) {
+      const isMulti = index + 1 === displayBossTimeStampList.length || displayBossTimeStampList[index + 1].bossId !== boss.bossId
+      if (boss.bossId !== beforeBossId) {
+        txtBoss += `${boss.boss?.name} `
+      }
+      txtBoss += `${boss.channel}`
+      if (isMulti) {
+        txtBoss += ` `
+      } else {
+        txtBoss += `→`
+      }
+      beforeBossId = boss.bossId
+      index++
+    }
+    navigator.clipboard.writeText(`${txtBoss}`);
+    notify()
+  }
+
   const notify = () => {
     toast('⌨ Copy to clipboard!', {
       position: "bottom-left",
@@ -410,7 +432,7 @@ export default function Home(props: PropsHome) {
               onClick={respawnAllBossToClipboard}
               disabled={displayBossTimeStampList.length === 0}
             >
-              Respawn Time all boss
+              Boss [CH] → Boss [CH] → ...
             </button>
             <button className="
                 transition-all
@@ -432,7 +454,7 @@ export default function Home(props: PropsHome) {
               onClick={respawnAllBossWithTimeToClipboard}
               disabled={displayBossTimeStampList.length === 0}
             >
-              Respawn Time all boss With time
+              Boss [CH] HH:MM:SS → Boss [CH] HH:MM:SS → ...
             </button>
             <button className="
                 transition-all
@@ -454,7 +476,29 @@ export default function Home(props: PropsHome) {
               onClick={respawnAllBossShotVersionToClipboard}
               disabled={displayBossTimeStampList.length === 0}
             >
-              Respawn Time all boss With time But Short Than 
+              Boss(ch HH:SS|ch HH:SS|...) Boss(ch HH:SS|ch HH:SS|...) ...
+            </button>
+            <button className="
+                transition-all
+                bg-green-700
+                hover:bg-green-800
+                disabled:bg-green-900
+                disabled:text-slate-200
+                disabled:cursor-not-allowed
+
+                text-white
+                rounded-sm
+                p-2
+                text-center
+                h-[34px]
+                mr-1
+                mb-3
+                text-[12px]
+              "
+              onClick={respawnAllBossWithChannel}
+              disabled={displayBossTimeStampList.length === 0}
+            >
+              Boss ch→ch→... Boss ch→ch→... ...
             </button>
           </div>
           <hr className="mt-3 mb-4" />

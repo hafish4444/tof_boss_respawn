@@ -250,7 +250,7 @@ export default function Home(props: PropsReport) {
                   {
                     bossRespawnByBossAllList.map((data, index) => {
                       return (
-                        <tr key={index}>
+                        <tr key={index + bossRespawnByBossDayList.length}>
                           <td className='px-3 py-2'>{data.name}</td>
                           <td className='px-3 py-2' align='center'>{numberWithCommas(data.amount)}</td>
                         </tr>
@@ -261,7 +261,7 @@ export default function Home(props: PropsReport) {
                 : 
                 <tbody className="self-center text-white text-xl col-span-12 text-center">
                 <tr>
-                  <td className='px-3 py-2' colSpan={2}>
+                  <td className='px-3 py-2' colSpan={3}>
                     <Image
                         src={"/nya.png"}
                         alt={`nya`}
@@ -293,6 +293,7 @@ export default function Home(props: PropsReport) {
                     <table className="table-full w-full">
                       <thead className='bg-[#252531] border-b border-gray-500'>
                         <tr>
+                          <th className='p-3 w-[15px]' align='center'>No.</th>
                           <th className='p-3' align='left'>Name</th>
                           <th className='p-3'>Channel</th>
                           <th className='p-3'>Death Time</th>
@@ -304,6 +305,7 @@ export default function Home(props: PropsReport) {
                           [...bossRespawnDayList, ...bossRespawnAllList].slice(0, MAX_AMOUNT).map((data, index) => {
                             return (
                               <tr key={index}>
+                                <td className='px-3 py-2 text-center'>{index + 1}</td>
                                 <td className='px-3 py-2'>{data.boss?.name}</td>
                                 <td className='px-3 py-2' align='center'>{data.channel}</td>
                                 <td className='px-3 py-2' align='center'>{moment(data.dieTime).format('DD/MM HH:mm:ss') }</td>
