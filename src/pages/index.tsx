@@ -302,6 +302,10 @@ export default function Home(props: PropsHome) {
         />
         <meta property="og:title" content="TOF Boss Respawn Time" key="title" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="google-site-verification"
+          content="google-site-verification=zIkcETD8qYWkP-dWjLb0Q8-LsOQglFpNKiZrzwva2oc"
+        />
       </Head>
       <div className="min-h-screen bg-[#181826]">
         <div className="max-w-8xl mx-auto px-4 py-8 sm:px-6 md:px-8">
